@@ -1,0 +1,5 @@
+---
+title: (Not so Ordinary Least Squares)
+subtitle: Canada/USA Mathcamp 2026
+toc: false
+---

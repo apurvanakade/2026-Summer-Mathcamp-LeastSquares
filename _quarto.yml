@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "(Not so) Ordinary Least Squares"
+  navbar:
+    left:
+      - ch1.qmd
+    right:
+      - icon: github
+        href: https://github.com/apurvanakade/
+        aria-label: GitHub
+  # sidebar: 
+  #   style: floating
+  #   search: true
+  #   contents: auto
+  open-graph: true
+  site-url: https://apurvanakade.github.io/
+  repo-url: https://github.com/apurvanakade/2026-Summer-MC-OLS/
+  search:
+    type: overlay
+    location: navbar
+  
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: cyborg
+
+# output-dir: docs
