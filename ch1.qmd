@@ -1,6 +1,8 @@
 ---
-title: Something something
-subtitle: Canada/USA Mathcamp 2026
+title: The Problem
 toc: false
 ---
 
+- Ceres problem 
+  - introduction
+  - include picture
