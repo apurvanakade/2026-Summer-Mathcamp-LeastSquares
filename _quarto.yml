@@ -3,30 +3,39 @@ project:
   output-dir: docs
 
 website:
-  title: "(Not so) Ordinary Least Squares"
+  title: "How to derive the bell curve"
+  bread-crumbs: true
+  page-navigation: true
   navbar:
-    left:
-      - ch1.qmd
     right:
       - icon: github
         href: https://github.com/apurvanakade/
         aria-label: GitHub
-  # sidebar: 
-  #   style: floating
-  #   search: true
-  #   contents: auto
+  sidebar: 
+    style: floating
+    search: true
+    contents: 
+      - day1.qmd
+      - day2.qmd
   open-graph: true
   site-url: https://apurvanakade.github.io/
-  repo-url: https://github.com/apurvanakade/2026-Summer-MC-OLS/
+  repo-url: https://github.com/apurvanakade/2026-Summer-Mathcamp-LeastSquares
   search:
     type: overlay
     location: navbar
   
+execute:
+  # Ensure Quarto preview uses the same Python/Jupyter environment.
+  python: /Users/apurvanakade/miniconda3/bin/python
+  echo: false
+  cache: true
 
 format:
   html:
     theme:
       light: cosmo
       dark: cyborg
-
+    html-math-method: katex
+  pdf:
+    keep-tex: true
 # output-dir: docs

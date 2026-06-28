@@ -1,0 +1,296 @@
+---
+title: Day 1 - Introduction
+subtitle: "Canada/USA Mathcamp 2026"
+author: "Apurva Nakade"
+date: "June 2026"
+toc: true
+jupyter: python3
+---
+
+
+TODO: 
+
+- Add section on linear algebra problems. One problem on basis of lagrange polynomials and one problem on Vandermonde matrix.
+- Add problem on piecewise linear fits and why they are bad.
+- Change coefficients to $\widehad{a}$ in the linear regression section. Make sure to introduce the term "parameters".
+
+<!-- # Introduction -->
+
+On January 1, 1801, the first asteroid, Ceres, was discovered, and just a month later, it was lost again behind the glare of the sun. Astronomers faced the challenge of calculating Ceres' orbit months into the future using only 22 observations. Being the first object of its kind to be discovered, astronomers did not know what eccentricity its orbit should have. Many tried guessing based on their "expertise," but Gauss solved the problem purely empirically - by analyzing data and making no further assumptions beyond Kepler's laws. 
+
+Gauss ended up with the best estimate - the asteroid was rediscovered exactly where he predicted - and became the OG data scientist. In the process, he invented the method of maximum likelihood estimation, (not so) ordinary least squares, applied it to linear regression, and discovered his most enduring legacy - *the bell curve* (and some astronomy stuff). In this class, we will learn all of these things (not the astronomy stuff). 
+
+![](images/ceres.png)
+
+![](images/full_sky.png)
+
+The first figure above shows the trajectory of Ceres as seen by Piazzi, the astronomer who discovered it. The second figure shows the full sky and how small the region of the sky is that Piazzi was observing. Gauss had to make a prediction of where Ceres would be in the sky based on only 22 observations in this tiny region of the sky.
+
+
+## The Estimation Problem
+
+Formally we start with the so called estimation problem. We are given a set of data points: $$(x_i, y_i) \text{ for } i = 1, 2, \ldots, n.$$ 
+Think of $x_i$ as inputs and $y_i$ as the corresponding outputs. 
+
+In general, we can have multiple inputs and outputs, but for simplicity, we will assume that both $x_i$ and $y_i$ are real numbers. In the Ceres example, there is one input - the time of observation - and two outputs - the right ascension and declination of the asteroid (coordinates describing its position in the sky). 
+
+**Our goal is to estimate the output $y$ for a new input $x$.** In the Ceres example, we want to estimate the position of the asteroid at a future time.
+
+## Regression Analysis
+
+One method to solve the estimation problem is using regression analysis. In regression analysis, we assume that there is some function $f$ such that
+
+$$
+y_i = f(x_i)
+$$
+
+Notice that there is no restriction on what $f$ can be. 
+Data scientists have to make a choice of what $f$ should be based on their expertise and the data they have. Probability theoreticians and statisticians have developed a number of methods to make this choice in a principled way. In this class, we will learn about one such method - the method of least squares.
+
+### Example
+
+Consider the following simple example. Suppose we have the following set of points
+
+$$
+(-1, 0), (0, 1), (1, 2), (2, 3)
+$$
+
+Our goal is to estimate the value of $y$ at $x = 3$.
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+class PlotBuilder:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.elements = []
+    
+    def add(self, draw_func):
+        """Add any drawing function that takes ax as parameter"""
+        self.elements.append(draw_func)
+        return self
+    
+    def render(self):
+        """Render the plot"""
+        fig, ax = plt.subplots(figsize=(8, 6))
+        
+        # Base plot
+        ax.scatter(self.x, self.y)
+        for xi, yi in zip(self.x, self.y):
+            ax.text(xi + 0.15, yi - 0.05, f"({xi}, {yi})", fontsize=9)
+        
+        ax.axhline(y=0, color='k', linewidth=0.5)
+        ax.axvline(x=0, color='k', linewidth=0.5)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_title('Data Points')
+        
+        # Add all stored elements
+        for element in self.elements:
+            element(ax)
+        
+        return fig, ax
+    
+    def show(self):
+        """Display the plot"""
+        fig, ax = self.render()
+        plt.show()
+        return self
+
+```
+
+```{python}
+
+# Usage:
+x = [-1, 0, 1, 2]
+y = [0, 1, 2, 3]
+y2 = [0, 1, 2, 3.5]
+
+plot = PlotBuilder(x, y)
+
+plot.add(lambda ax: ax.set_xlim(min(x) - 1, 3 + 1))
+plot.add(lambda ax: ax.set_ylim(min(y2) - 1, max(y2) + 1))
+
+# Initial plot
+plot.add(lambda ax: ax.axvline(x=3, linewidth=1, linestyle=':'))
+plot.add(lambda ax: ax.text(3 + 0.15, 0 + 0.05, "x=3", fontsize=9, color='red'))
+plot.show()
+```
+
+
+In this case there is a simple natural choice - we can fit the line $y = x+ 1$ to the data points and use it to estimate the value of $y$ at $x = 3$. This gives us an estimate of $y = 4$.
+
+```{python}
+# Add line y=x+1
+plot.add(lambda ax: ax.plot([-2, 4], [-1, 5], color='blue', linewidth=1, linestyle='--'))
+plot.add(lambda ax: ax.scatter([3], [4], marker='x', color='red'))
+plot.add(lambda ax: ax.text(3 + 0.15, 4 + 0.05, "(3, 4)", fontsize=9, color='red'))
+plot.show()
+```
+
+But now suppose the last data point was actually $(2, 3.5)$ instead of $(2, 3)$. The linear model $y = x + 1$ is no longer a good fit for the data. 
+
+```{python}
+# Add point
+plot.add(lambda ax: ax.scatter([x[3]], [y2[3]], color='green', s=100))
+plot.add(lambda ax: ax.text(x[3] - 1.15, y2[3] + 0.15, f"New point ({x[3]}, {y2[3]})", fontsize=9))
+plot.show()
+```
+
+One simple way to do this is to try to fit a third degree polynomial as shown below. This gives us an estimate of $y = 6$ for $x=3$.
+
+```{python}
+
+import numpy as np
+
+a_0, a_1, a_2, a_3 = np.polyfit(x, y2, 3)
+
+# add polynomial curve
+x_cubic = np.linspace(-2, 4, 100)
+y_cubic = a_0 * x_cubic**3 + a_1 * x_cubic**2 + a_2 * x_cubic + a_3
+
+plot.add(lambda ax: ax.plot(x_cubic, y_cubic, color='green', linewidth=1, linestyle='-'))
+plot.add(lambda ax: ax.set_ylim(-1, 10))
+
+intersection_cubic = a_0 * 3**3 + a_1 * 3**2 + a_2 * 3 + a_3
+plot.add(lambda ax: ax.scatter([3], [intersection_cubic], marker='x', color='red'))
+plot.add(lambda ax: ax.text(3 - 0.65, intersection_cubic + 0.05, f"(3, {intersection_cubic:.2f})", fontsize=9, color='red'))
+plot.show()
+```
+
+## Sensitivity of Estimates
+
+But why should we prefer one model over another? To answer this, we need to understand how sensitive our predictions are to small changes in the data.
+
+First let us see why exact, high degree polynomial fits are not ideal for data fitting. Consider the above example again.
+
+::: {.callout-important}
+## Problems - Cubic Polynomial Fit
+
+**Exercise 1:** Find the cubic polynomial fitting the data $(-1, 0), (0, 1), (1, 2), (2, z)$. Call this polynomial $p(x)$.
+
+**Exercise 2:** Compute $p(2)$.
+
+**Exercise 3:** Compute $\dfrac{dp(3)}{dz}$. Call this $\kappa_{2 \to 3}$ (kappa).
+
+:::
+
+The constant $\kappa_{2 \to 3}$ represents the sensitivity of the estimate at $x=3$ to the value of the last data point at $x=2$. One can similarly calculate the sensitivity of the estimate at $x=3$ to the other data points $\kappa_{x_i \to 3}$. It represents how much the estimate at $x=3$ will change if we change the value of one of the data points. 
+
+In practice, our data is often noisy and we do not know the true value of the data points. Any error in the data points will be amplified by the sensitivity constants $\kappa_{x_i \to 3}$. The larger the sensitivity constants, the more sensitive our estimate is to errors in the data. On the other hand, too small a sensitivity constant means that our estimate might neglect important information in the data. So we want to find a model that balances these two competing goals.
+
+
+### Polynomial Fits
+
+We can extend the above analysis to polynomial fits of any degree. Consider the following set of data points:
+
+$$
+(x_i, y_i) \text{ for } i = 1, 2, \dots, n.
+$$
+
+For the sake of simplicity assume that $x_i = i$ so that our data points are
+$$
+(i, y_i) \text{ for } i = 1, 2, \dots, n.
+$$
+
+and that our goal is to estimate the value of $y$ at $x = n+1$.
+
+We can fit a degree $n-1$ polynomial i.e. we can find $n$ coefficients $a_0, a_1, \dots, a_n$ such that 
+
+$$
+y_i = a_0 + a_1 \cdot x_i + a_2 \cdot x_i^2 + \dots + a_n \cdot x_i^{n-1},
+$$
+
+for all $i = 1, 2, \dots, n$. We can accomplish this in the following way.
+
+::: {#higher-degree-polynomial-fits .callout-important}
+## Problems - Higher Degree Polynomial Fits
+
+**Exercise 4:** Let $j$ be an integer between $1$ and $n$. Find the degree $n-1$ polynomial $p_i(n)$ satisfying 
+
+$$ 
+p_j(i) = \begin{cases}
+1 & \text{if } i = j, \\
+0 & \text{if } i \neq j.
+\end{cases}
+$$
+
+Such a polynomial is called a **Lagrange polynomial**.
+
+**Exercise 5:** Use the Lagrange polynomials to find the degree $n-1$ polynomial $p(x)$ satisfying 
+
+$$
+p(i) = y_i, \text{ for } i = 1, 2, \dots, n.
+$$
+
+**Exercise 6:** Consider the two extreme sensitivities $\kappa_{1 \to {n+1}} = \dfrac{dp(n+1)}{dy_1}$ and $\kappa_{n \to {n+1}} = \dfrac{dp(n+1)}{dy_n}$. Without performing any calculations, which one do you think is larger? Why?
+
+**Exercise 7:** Now calculate the two extreme sensitivities $\kappa_{1 \to {n+1}} = \dfrac{dp(n+1)}{dy_1}$ and $\kappa_{n \to {n+1}} = \dfrac{dp(n+1)}{dy_n}$. Does your answer match your intuition? Why or why not?
+
+You should see that sensitivity of the estimate at $x = n+1$ to the value at $x = n$ increases with $n$. This means that as we increase the degree of the polynomial, our estimate becomes more sensitive to errors in the data. In fact, our data is especially nice as the input coordinates are evenly spaced. In general, the sensitivity of the estimate to errors in the data can be much worse when input coordinates are uneven and the target coordinate is far away from the input coordinates. This is called **Runge's phenomenon**. Because of this fitting high degree models is impractical in general.
+
+:::
+
+### Connections to Linear Algebra
+
+
+## Approximate Fits
+
+This brings us to the idea of approximate fits. Instead of trying to fit a polynomial that passes through all the data points, we can try to find a polynomial that is "close" to the data points. There are many ways to define "closeness".
+
+1. One options is to try and fit a second degree polynomial using only the closest three points. This is shown below and it gives an estimate of $y = 5.5$ for $x=3$.
+
+```{python}
+b_0, b_1, b_2 = np.polyfit(x[1:4], y2[1:4], 2)
+
+# add polynomial curve
+x_quad = np.linspace(-2, 4, 100)
+y_quad = b_0 * x_quad**2 + b_1 * x_quad + b_2
+
+plot.add(lambda ax: ax.plot(x_quad, y_quad, color='orange', linewidth=1, linestyle='-'))
+plot.add(lambda ax: ax.set_ylim(-1, 10))
+
+intersection_quad = b_0 * 3**2 + b_1 * 3 + b_2
+plot.add(lambda ax: ax.scatter([3], [intersection_quad], marker='x', color='red'))
+plot.add(lambda ax: ax.text(3 + 0.15, intersection_quad + 0.05, f"(3, {intersection_quad:.2f})", fontsize=9, color='red'))
+plot.show()
+```
+
+2. Another option is to fit a "best possible line" through the four points. However, as we will see below, there is no such thing as a "best possible line" and the estimate will depend on how we define "best". The example below shows an ordinary least squares fit to the data points. This gives an estimate of $y = 4.5$ for $x=3$.
+
+
+```{python}
+
+
+c_0, c_1 = np.polyfit(x, y2, 1)
+
+# add polynomial curve
+x_linear = np.linspace(-2, 4, 100)
+y_linear = c_0 * x_linear + c_1
+
+plot.add(lambda ax: ax.plot(x_linear, y_linear, color='purple', linewidth=1, linestyle='-'))
+plot.add(lambda ax: ax.set_ylim(-1, 10))
+
+intersection_linear = c_0 * 3 + c_1
+plot.add(lambda ax: ax.scatter([3], [intersection_linear], marker='x', color='red'))
+plot.add(lambda ax: ax.text(3 + 0.15, intersection_linear + 0.05, f"(3, {intersection_linear:.2f})", fontsize=9, color='red'))
+plot.show()
+```
+
+Notice that as the degree of the model decreases, the sensitivity of the estimate to errors in the data decreases. The sensitivity column shows how much our estimate at $x=3$ changes when the last data point changes from $(2, 3)$ to $(2, 3.5)$—that is, $\frac{\text{(new estimate)} - 4}{3.5 - 3}$.
+
+::: {callout-tip}
+
+### Summary
+
+| Model | Estimate at $x=3$ | Perfect fit? | Sensitivity of $y(3)$ to $y(2)$ |
+|-------|------------------|---------------|-------------------------------|
+| Degree 3 polynomial | 6 | Yes | $\frac{6-4}{3.5 - 3} = 4$ |
+| Degree 2 polynomial | 5.5 | No | $\frac{5.5-4}{3.5 - 3} = 3$ |
+| Degree 1 polynomial | 4.5 | No | $\frac{4.5-4}{3.5 - 3} = 2$ |
+
+:::
+
+Note that also means that there is no unique solution to the estimation problem. Your estimate will depend on the model you choose to fit to the data. In this class, we will focus on linear models. We will see that even for linear models, there is no unique solution to the estimation problem. We will learn how to choose a model in a principled way.
