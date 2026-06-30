@@ -2,6 +2,7 @@
 **/*.quarto_ipynb
 **/*.jupyter_cache
 /docs/
+/_site/
 .DS_Store
 *.tex
 day1_files/
