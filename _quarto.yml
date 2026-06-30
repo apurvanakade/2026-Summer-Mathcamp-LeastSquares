@@ -14,8 +14,12 @@ website:
         href: day2.qmd
       - text: Day 3
         href: day3.qmd
-      - text: Day 3'
-        href: day3 copy.qmd
+      - text: Day 4
+        href: day4.qmd
+      - text: Day 4'
+        href: day4 copy.qmd
+      - text: Day 5
+        href: day5.qmd
     right:
       - icon: github
         href: https://github.com/apurvanakade/
