@@ -1,0 +1,343 @@
+---
+title: "Day 3 - Random Variables and Distributions"
+subtitle: "Canada/USA Mathcamp 2026"
+author: "Apurva Nakade"
+date: "June 2026"
+toc: true
+jupyter: python3
+---
+
+## From Data to Randomness
+
+In the previous lectures, we treated our measurements as fixed numbers and asked how to estimate an unknown quantity from them. But where does the variation in our data come from?
+
+In the gravitational acceleration experiment, each measurement differed slightly from the true value due to random errors—tiny fluctuations in equipment, air currents, timing, etc. To understand *why* certain estimators (like the mean) work better than others, we need to model this randomness mathematically.
+
+Today we develop the language of **random variables** and **distributions**. As before, you'll discover the key ideas through exercises.
+
+
+## Discrete Random Variables
+
+Let's start with a familiar example.
+
+### A Loaded Die
+
+Suppose you have a six-sided die that's been tampered with. After rolling it many times, you record the following frequencies:
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+faces = [1, 2, 3, 4, 5, 6]
+probs = [0.1, 0.1, 0.2, 0.2, 0.2, 0.2]
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.bar(faces, probs, edgecolor='black', alpha=0.7)
+ax.set_xlabel('Face')
+ax.set_ylabel('Probability')
+ax.set_title('Distribution of a loaded die')
+ax.set_xticks(faces)
+ax.set_ylim(0, 0.35)
+plt.tight_layout()
+plt.show()
+```
+
+The outcome of rolling this die is a **random variable**—a quantity whose value is determined by chance. We typically denote random variables by capital letters like $X$.
+
+A random variable is completely described by its **distribution**: the list of possible values and their probabilities.
+
+::: {.callout-note}
+## Exercises: Discrete Distributions
+
+**Exercise 1:** Let $X$ be the outcome of rolling the loaded die above.
+
+(a) Write down $P(X = k)$ for each $k \in \{1, 2, 3, 4, 5, 6\}$.
+(b) Verify that $\sum_{k=1}^{6} P(X = k) = 1$. Why must this be true?
+(c) Compute $P(X \leq 3)$ and $P(X > 4)$.
+
+**Exercise 2:** You flip a fair coin 3 times. Let $Y$ be the number of heads.
+
+(a) List all 8 possible outcomes (HHH, HHT, ...).
+(b) Find $P(Y = k)$ for $k = 0, 1, 2, 3$.
+(c) What is $P(Y \geq 2)$?
+
+**Exercise 3:** Let $X$ be a random variable taking values $1, 2, \ldots, n$ with $P(X = k) = \frac{k}{c}$ for some constant $c$.
+
+(a) Find $c$ in terms of $n$.
+(b) Compute $P(X \leq n/2)$ when $n = 10$.
+
+:::
+
+
+## Continuous Random Variables
+
+Discrete random variables take values in a finite (or countable) set. But many quantities—like measurement errors, waiting times, or positions—can take any real value in some interval.
+
+### The Uniform Distribution
+
+The simplest continuous distribution is the **uniform distribution** on an interval $[a, b]$, where every value is "equally likely."
+
+But what does "equally likely" mean when there are infinitely many values? We can't assign a positive probability to each point (they'd sum to infinity). Instead, we describe probabilities using a **probability density function (pdf)**.
+
+For the uniform distribution on $[a, b]$:
+
+$$
+f(x) = \begin{cases} \frac{1}{b-a} & \text{if } a \leq x \leq b \\ 0 & \text{otherwise} \end{cases}
+$$
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(7, 4))
+
+a, b = 1, 4
+x = np.linspace(-0.5, 5.5, 300)
+y = np.where((x >= a) & (x <= b), 1/(b-a), 0)
+
+ax.plot(x, y, 'b-', linewidth=2)
+ax.fill_between(x, y, alpha=0.3)
+ax.set_xlabel('x')
+ax.set_ylabel('Density f(x)')
+ax.set_title(f'Uniform distribution on [{a}, {b}]')
+ax.set_ylim(0, 0.5)
+ax.axhline(y=0, color='k', linewidth=0.5)
+plt.tight_layout()
+plt.show()
+```
+
+The key idea: **probability = area under the density curve**.
+
+$$
+P(c \leq X \leq d) = \int_c^d f(x) \, dx
+$$
+
+::: {.callout-note}
+## Exercises: Uniform Distribution
+
+**Exercise 4:** Let $X$ be uniformly distributed on $[0, 1]$.
+
+(a) What is $P(X \leq 0.5)$?
+(b) What is $P(0.25 \leq X \leq 0.75)$?
+(c) What is $P(X = 0.5)$? (Hint: what's the area of a line segment?)
+
+**Exercise 5:** Let $X$ be uniformly distributed on $[a, b]$.
+
+(a) Verify that $\int_{-\infty}^{\infty} f(x) \, dx = 1$.
+(b) Compute $P(X \leq \frac{a+b}{2})$.
+
+:::
+
+
+### Other Continuous Distributions
+
+What if some values are more likely than others? Consider a density that increases linearly:
+
+$$
+f(x) = \begin{cases} cx & \text{if } 0 \leq x \leq 1 \\ 0 & \text{otherwise} \end{cases}
+$$
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.5))
+
+# Linear increasing
+x = np.linspace(-0.2, 1.3, 300)
+y = np.where((x >= 0) & (x <= 1), 2 * x, 0)
+axes[0].plot(x, y, 'b-', linewidth=2)
+axes[0].fill_between(x, y, alpha=0.3)
+axes[0].set_xlabel('x')
+axes[0].set_ylabel('Density')
+axes[0].set_title('$f(x) = 2x$')
+axes[0].set_ylim(0, 2.5)
+axes[0].axhline(y=0, color='k', linewidth=0.5)
+
+# Linear decreasing
+y = np.where((x >= 0) & (x <= 1), 2 * (1 - x), 0)
+axes[1].plot(x, y, 'b-', linewidth=2)
+axes[1].fill_between(x, y, alpha=0.3)
+axes[1].set_xlabel('x')
+axes[1].set_ylabel('Density')
+axes[1].set_title('$f(x) = 2(1-x)$')
+axes[1].set_ylim(0, 2.5)
+axes[1].axhline(y=0, color='k', linewidth=0.5)
+
+# Quadratic (parabola)
+y = np.where((x >= 0) & (x <= 1), 6 * x * (1 - x), 0)
+axes[2].plot(x, y, 'b-', linewidth=2)
+axes[2].fill_between(x, y, alpha=0.3)
+axes[2].set_xlabel('x')
+axes[2].set_ylabel('Density')
+axes[2].set_title('$f(x) = 6x(1-x)$')
+axes[2].set_ylim(0, 2.5)
+axes[2].axhline(y=0, color='k', linewidth=0.5)
+
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-note}
+## Exercises: Other Densities
+
+**Exercise 6:** Let $X$ have density $f(x) = cx$ on $[0, 1]$ (and $0$ elsewhere).
+
+(a) Find the constant $c$ that makes this a valid pdf.
+(b) Compute $P(X \leq 0.5)$.
+(c) Compute $P(X \geq 0.5)$. Verify that your answers to (b) and (c) sum to 1.
+
+**Exercise 7:** Let $X$ have density $f(x) = c(1-x)$ on $[0, 1]$.
+
+(a) Find $c$.
+(b) Compute $P(X \leq 0.5)$.
+(c) Compare with Exercise 6. What's the relationship between these two distributions?
+
+**Exercise 8:** Let $X$ have density $f(x) = c \cdot x(1-x)$ on $[0, 1]$.
+
+(a) Find $c$.
+(b) Where is the density maximized? 
+(c) Compute $P(0.25 \leq X \leq 0.75)$.
+
+**Exercise 9:** Let $X$ have density $f(x) = c \cdot x^2$ on $[0, 1]$.
+
+(a) Find $c$.
+(b) Compute $P(X \leq 0.5)$.
+(c) Compare this to your answer in Exercise 6(b). Which distribution puts more weight near $x = 1$?
+
+:::
+
+::: {.callout-tip}
+### The Beta Family
+
+The densities $f(x) \propto x^{a}(1-x)^{b}$ on $[0,1]$ form a family called the **Beta distributions**. They're useful for modeling random quantities that are bounded between 0 and 1, like probabilities themselves. The exercises above correspond to:
+
+- Exercise 6: $\text{Beta}(2, 1)$
+- Exercise 7: $\text{Beta}(1, 2)$
+- Exercise 8: $\text{Beta}(2, 2)$
+- Exercise 9: $\text{Beta}(3, 1)$
+:::
+
+
+## Independence
+
+When we take multiple measurements, we usually assume they don't influence each other—knowing that the first measurement was 9.82 m/s² doesn't change the probabilities for the second measurement. This concept is called **independence**.
+
+### Discrete Case
+
+::: {.callout-note}
+## Exercises: Discovering Independence
+
+**Exercise 10:** Flip a fair coin twice. Let $X$ be the first result (1 for heads, 0 for tails) and $Y$ the second.
+
+(a) List all four outcomes and their probabilities.
+(b) Compute $P(X = 1)$ and $P(Y = 1)$.
+(c) Compute $P(X = 1 \text{ and } Y = 1)$.
+(d) Verify that $P(X = 1 \text{ and } Y = 1) = P(X = 1) \cdot P(Y = 1)$.
+(e) Check that this relationship holds for all four combinations of values of $X$ and $Y$.
+
+**Exercise 11:** Roll a fair die twice. Let $X$ be the first roll and $Y$ the second.
+
+(a) What is $P(X = 3 \text{ and } Y = 5)$?
+(b) What is $P(X = 3) \cdot P(Y = 5)$?
+(c) Are these equal? Is this what you'd expect?
+
+**Exercise 12:** Draw two cards from a standard deck *without replacement*. Let $X = 1$ if the first card is an ace (0 otherwise), and $Y = 1$ if the second card is an ace.
+
+(a) Compute $P(X = 1)$.
+(b) Compute $P(X = 1 \text{ and } Y = 1)$. (Hint: use $P(A \text{ and } B) = P(A) \cdot P(B \mid A)$.)
+(c) Compute $P(X = 1) \cdot P(Y = 1)$.
+(d) Are (b) and (c) equal? Explain why this makes sense.
+
+**Exercise 13:** Based on the previous exercises, propose a definition: when should we call two discrete random variables **independent**?
+
+:::
+
+Two discrete random variables $X$ and $Y$ are **independent** if:
+
+$$
+P(X = x \text{ and } Y = y) = P(X = x) \cdot P(Y = y) \quad \text{for all } x, y
+$$
+
+In words: knowing the value of $X$ tells you nothing about $Y$, and vice versa. The joint probability factors as a product of the individual probabilities.
+
+### Continuous Case
+
+For continuous random variables, independence means the joint density factors:
+
+$$
+f_{X,Y}(x, y) = f_X(x) \cdot f_Y(y)
+$$
+
+::: {.callout-note}
+## Exercises: Independence for Continuous Variables
+
+**Exercise 14:** Let $X$ and $Y$ be independent, both uniformly distributed on $[0, 1]$. The pair $(X, Y)$ is a random point in the unit square.
+
+(a) What is $P(X \leq 0.5 \text{ and } Y \leq 0.5)$?
+(b) Sketch the region where $X \leq 0.5$ and $Y \leq 0.5$ in the unit square. Verify your answer to (a) by computing the area.
+
+**Exercise 15:** Let $X$ and $Y$ be independent, both uniformly distributed on $[0, 1]$.
+
+(a) What is $P(X \leq 0.3 \text{ and } Y \geq 0.7)$?
+(b) What is $P(X \leq Y)$? (Hint: sketch the region in the unit square.)
+
+**Exercise 16:** Let $X$ and $Y$ be independent, both with density $f(x) = 2x$ on $[0, 1]$.
+
+(a) What is the joint density $f_{X,Y}(x, y)$?
+(b) Compute $P(X \leq 0.5 \text{ and } Y \leq 0.5)$.
+
+**Exercise 17:** (Challenge) Let $X$ and $Y$ be independent, both uniformly distributed on $[0, 1]$. Let $M = \max(X, Y)$.
+
+(a) Show that $P(M \leq t) = P(X \leq t \text{ and } Y \leq t) = t^2$ for $t \in [0, 1]$.
+(b) Find the density of $M$. (Hint: differentiate.)
+(c) What distribution from our earlier exercises does this match?
+
+:::
+
+
+## Multiple Independent Measurements
+
+The power of independence becomes clear when we have many measurements.
+
+::: {.callout-note}
+## Exercises: Many Measurements
+
+**Exercise 18:** Suppose you flip a fair coin 5 times. Let $X_1, X_2, X_3, X_4, X_5$ be the results (1 for heads, 0 for tails), and assume they are independent.
+
+(a) What is $P(X_1 = 1 \text{ and } X_2 = 1 \text{ and } X_3 = 1 \text{ and } X_4 = 1 \text{ and } X_5 = 1)$?
+(b) What is $P(X_1 = 0 \text{ and } X_2 = 1 \text{ and } X_3 = 0 \text{ and } X_4 = 1 \text{ and } X_5 = 0)$?
+(c) What is the probability of any specific sequence of 5 flips?
+
+**Exercise 19:** Suppose you make 3 independent measurements $X_1, X_2, X_3$, each uniformly distributed on $[0, 1]$.
+
+(a) What is $P(X_1 \leq 0.5 \text{ and } X_2 \leq 0.5 \text{ and } X_3 \leq 0.5)$?
+(b) What is $P(\text{all three measurements are} \leq 0.5)$?
+(c) What is $P(\text{at least one measurement is} > 0.5)$?
+
+**Exercise 20:** Let $X_1, X_2, \ldots, X_n$ be independent random variables, each with density $f(x) = 2x$ on $[0, 1]$.
+
+(a) Write down the joint density $f_{X_1, \ldots, X_n}(x_1, \ldots, x_n)$.
+(b) Compute $P(X_1 \leq 0.5 \text{ and } X_2 \leq 0.5 \text{ and } \cdots \text{ and } X_n \leq 0.5)$.
+
+:::
+
+
+## Summary
+
+| Concept | Discrete | Continuous |
+|---------|----------|------------|
+| **Distribution** | Values and their probabilities | Probability density function $f(x)$ |
+| **Probabilities** | $P(X = k)$ | $P(a \leq X \leq b) = \int_a^b f(x) \, dx$ |
+| **Must satisfy** | $\sum_k P(X = k) = 1$ | $\int_{-\infty}^{\infty} f(x) \, dx = 1$ |
+| **Independence** | $P(X = x, Y = y) = P(X=x) \cdot P(Y=y)$ | $f_{X,Y}(x,y) = f_X(x) \cdot f_Y(y)$ |
+
+
+## Looking Ahead
+
+We now have the vocabulary to model measurement error as a random variable. In the next lecture, we'll use these tools to answer the question from Day 2: *which estimator should we prefer?*
+
+The key idea will be **maximum likelihood**: given observed data, which value of the unknown parameter makes that data most probable? We'll discover that this question leads us to a very specific—and very famous—probability distribution.

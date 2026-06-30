@@ -1,0 +1,8 @@
+---
+title: Day 4 - Maximum Likelihood Estimation
+subtitle: "Canada/USA Mathcamp 2026"
+author: "Apurva Nakade"
+date: "June 2026"
+toc: true
+jupyter: python3
+---

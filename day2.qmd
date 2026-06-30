@@ -1,5 +1,5 @@
 ---
-title: Day 2 - $L^p$ spaces
+title: Day 2 - Norms and Estimators
 subtitle: "Canada/USA Mathcamp 2026"
 author: "Apurva Nakade"
 date: "June 2026"
@@ -7,238 +7,274 @@ toc: true
 jupyter: python3
 ---
 
+## From Exact to Approximate Fits
 
+In the previous lecture, we saw that fitting a polynomial exactly through all data points leads to **overfitting**—the estimates become extremely sensitive to small changes in the data. The solution is to allow approximate fits, where our model doesn't pass through every point exactly.
 
-## Residuals
-
-As we saw in the previous example, there is no line that passes through all the points. So we need to update our model to allow for approximate fits i.e. we need to find a function $f$ such that 
-
-$$
-y_i \approx f(x_i), \text{ for } i = 1, 2, \ldots, n.
-$$
-
-We make this precise by introducing **residuals** $\epsilon_1, \epsilon_2, \ldots, \epsilon_n$ such that
+Formally, instead of requiring $y_i = f(x_i)$, we introduce **residuals** $\epsilon_1, \epsilon_2, \ldots, \epsilon_n$ and write
 
 $$
-y_i = f(x_i) + \epsilon_i, \text{ for } i = 1, 2, \ldots, n.
+y_i = f(x_i) + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n.
 $$
 
-Now our goal is to find a function $f$ that minimizes the residuals. But what does it mean to minimize the residuals? There are many ways to measure the size of the residuals. We will see that different choices lead to different estimates of $f$. 
+The residual $\epsilon_i$ measures how much the model prediction $f(x_i)$ differs from the observed value $y_i$. A good model should make the residuals "small"—but what exactly does "small" mean for a collection of $n$ numbers?
 
-## A degree 0 fit
+This question leads us to a fundamental principle:
 
-To understand this better, let's start with a simple example. Let's try to fit a degree 0 polynomial to the data. More simply put, suppose we measure a quantity $g$ at different times $g_1, g_2, \ldots, g_n$. For example, say you have an experiment to measure the gravitational acceleration $g$ on the surface of the earth. You measure $g$ (in $m/s^2$) at different times and get the following data:
+::: {.callout-tip}
+### The Core Idea: Estimation = Minimization 
+
+Estimating a quantity from data is equivalent to minimizing the residuals with respect to a chosen notion of "size."
+
+Different notions of size lead to different estimators. This is the foundation of modern data science, machine learning, and AI. For example, training a neural network means choosing a loss function (a way to measure residual size) and minimizing it with respect to the network's parameters.
+:::
+
+Today we'll explore this principle through the simplest possible estimation problem: estimating a constant from repeated measurements.
+
+
+## Estimating a Constant
+
+Suppose you run an experiment to measure the gravitational acceleration $g$ at Earth's surface. Due to measurement error, each trial gives a slightly different value. Here are 100 measurements (in m/s²):
 
 ```{python}
+#| echo: false
 import numpy as np
+import pandas as pd
 
 g_true = 9.81
-
 np.random.seed(0)
 n = 100
 g_data = g_true + np.random.normal(0, 0.1, n)
-print(g_data)
+
+# Display first few values
+print("First 10 measurements:", np.round(g_data[:10], 3))
+print(f"Min: {g_data.min():.3f}, Max: {g_data.max():.3f}")
 ```
 
-What is the correct value of $g$?
+What single value $\widehat{g}$ best represents the "true" gravitational acceleration?
 
-In the language of estimation theory, we want to find a "model" $\widehat{g}$, which in this case is just a constant, so that 
+In estimation language, we want to find $\widehat{g}$ such that
 
 $$
-g_i = \widehat{g} + \epsilon_i, \text{ for } i = 1, 2, \ldots, n.
+g_i = \widehat{g} + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
 $$ {#eq-estimating-g}
 
-Our goal is to find a $\widehat{g}$ that minimizes the residuals $\epsilon_i$. But again what does it mean to minimize the residuals? 
-
-## Norms
-
-Consider the vector of residuals 
-$$
-\vec{\epsilon} = \begin{bmatrix}\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n\end{bmatrix}.
-$$ 
-
-We can think of $\vec{\epsilon}$ as a vector in $\mathbb{R}^n$. Our goal then is to define a notion of size of a vector in $\mathbb{R}^n$. In mathematics, we call this a **norm**. 
-
-A **norm** on $\mathbb{R}^n$ is a function $||\cdot||: \mathbb{R}^n \to \mathbb{R}$ that satisfies the following properties:
-
-1. $||\vec{x}|| \geq 0$ for all $\vec{x} \in \mathbb{R}^n$ and $||\vec{x}|| = 0$ if and only if $\vec{x} = 0$.
-2. $||\alpha \vec{x}|| = |\alpha| \cdot ||\vec{x}||$ for all $\alpha \in \mathbb{R}$ and $\vec{x} \in \mathbb{R}^n$.
-3. $||\vec{x} + \vec{y}|| \leq ||\vec{x}|| + ||\vec{y}||$ for all $\vec{x}, \vec{y} \in \mathbb{R}^n$ (triangle inequality).
+where the residuals $\epsilon_i = g_i - \widehat{g}$ are as "small" as possible. 
 
 ::: {.callout-note}
-
-### Why this definition?
-
-The first property is a natural requirement for a notion of size. Sometimes we want to allow the size to be zero even if the vector is not zero, and we call such a function a **semi-norm**. 
-
-The second property is saying that if we scale a vector, its "size" scales by the same factor - which is what we expect from a notion of size.
-
-The third property is called the triangle inequality. This property allows us to define something called a **topology** on $\mathbb{R}^n$. A topology then allows us to perform analysis (calculus) on $\mathbb{R}^n$.
-
+### Connection to Regression
+This is actually a regression problem in disguise! We're fitting a "degree 0 polynomial" (a constant function) to the data. The techniques we develop here will generalize to fitting lines, parabolas, and more complex models.
 :::
 
 
-## $L^p$ norms
-We will study a large class of norms called the $L^p$ norms and see how they lead to different estimates of $\widehat{g}$. The $L^p$ norm is defined as follows:
+## Measuring Size: Norms
+
+To make "small residuals" precise, we need to measure the size of the residual vector
 
 $$
-||\vec{x}||_p = \left( |x_1|^p + |x_2|^p + \ldots + |x_n|^p \right)^{1/p}
+\vec{\epsilon} = \begin{bmatrix}\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n\end{bmatrix} \in \mathbb{R}^n.
 $$
 
-where $|x|$ is the absolute value of $x$ and $p \geq 1$.
+In mathematics, a function that measures vector size is called a **norm**.
+
+### Definition and Properties
+
+A **norm** on $\mathbb{R}^n$ is a function $\|\cdot\|: \mathbb{R}^n \to \mathbb{R}$ satisfying:
+
+1. **Positivity:** $\|\vec{x}\| \geq 0$ for all $\vec{x}$, with $\|\vec{x}\| = 0$ if and only if $\vec{x} = \vec{0}$.
+2. **Scaling:** $\|\alpha \vec{x}\| = |\alpha| \cdot \|\vec{x}\|$ for all scalars $\alpha$ and vectors $\vec{x}$.
+3. **Triangle inequality:** $\|\vec{x} + \vec{y}\| \leq \|\vec{x}\| + \|\vec{y}\|$ for all $\vec{x}, \vec{y}$.
+
+::: {.callout-tip collapse="true"}
+### Why these axioms?
+
+- **Positivity** is natural: size should be non-negative, and only the zero vector has zero size.
+- **Scaling** says that stretching a vector by factor $\alpha$ stretches its size by $|\alpha|$.
+- **Triangle inequality** is the key property that allows us to do analysis (calculus) with norms. It says the "direct path" is never longer than going through an intermediate point.
+
+If we drop the requirement that $\|\vec{x}\| = 0 \Rightarrow \vec{x} = \vec{0}$, we get a **semi-norm**.
+:::
+
+### The $L^p$ Family
+
+The most important family of norms is the **$L^p$ norms**, defined for $p \geq 1$:
+
+$$
+\|\vec{x}\|_p = \left( |x_1|^p + |x_2|^p + \cdots + |x_n|^p \right)^{1/p}
+$$
+
+Different values of $p$ weight errors differently:
+
+- **Small $p$:** treats all errors more equally
+- **Large $p$:** increasingly dominated by the largest errors
 
 ::: {.callout-note}
+## Exercises: $L^p$ Norms
 
-### Why $p \geq 1$?
+**Exercise 1:** Prove that $\|\cdot\|_1$ satisfies all three norm axioms.
 
-For $p < 1$, the function $||\cdot||_p$ fails to satisfy the triangle inequality, so it is not a norm. The proof that $L^p$ is a norm for $p \geq 1$ relies on two important inequalities: **Hölder's inequality** and **Minkowski's inequality**. These are beautiful results that are worth exploring if you're interested in analysis.
+**Exercise 2:** Prove that $\|\cdot\|_2$ satisfies all three norm axioms.
 
+**Exercise 3:** (Challenge) Prove that $\|\cdot\|_p$ is a norm for all $p \geq 1$. (Hint: Look up Minkowski's inequality.)
 :::
+
+
+## Three Estimators
+
+We now apply three different $L^p$ norms to our estimation problem and discover that each leads to a familiar statistic.
+
+### $L^2$ Norm: The Mean
+
+The $L^2$ norm is the **Euclidean distance**:
+
+$$
+\|\vec{\epsilon}\|_2 = \sqrt{\epsilon_1^2 + \epsilon_2^2 + \cdots + \epsilon_n^2}
+$$
+
+Because squaring amplifies large values, the $L^2$ norm penalizes large errors heavily.
 
 ::: {.callout-important}
-## Problems - $L^p$ Norms
-
-**Exercise 1:** Prove that $L^p$ is a norm for $p = 1$.
-
-**Exercise 2:** Prove that $L^p$ is a norm for $p = 2$.
-
-**Exercise 3:** (Very Difficult Challenge) Prove that $L^p$ is a norm for $p \geq 1$. 
-
-**Exercise 4:** Plot the unit balls $\{\vec{x} \in \mathbb{R}^2 : ||\vec{x}||_p = 1\}$ for $p = 1, 2$. More explicitly, plot the following curves in $\mathbb{R}^2$:
-    
-- $p = 1$: $|x| + |y| = 1$
-- $p = 2$: $x^2 + y^2 = 1$
-
-    Use Desmos to plot the unit balls as $p \to \infty$. What do you notice? What happens for $p < 1$? 
-
-:::
-
-### $p=2$ norm
-
-Plugging in $p=2$ gives us the usual **Euclidean distance**:
-
-$$
-||\vec{\epsilon}||_2 = \sqrt{\epsilon_1^2 + \epsilon_2^2 + \ldots + \epsilon_n^2}.
-$$
-
-Solving the estimation problem @eq-estimating-g with the $L^2$ norm gives us the following optimization problem:
-
-::: {.callout-note}
-
 #### $L^2$ Estimation Problem
 
 Find $\widehat{g}$ that minimizes 
 
 $$
-||\vec{\epsilon}||_2 = \sqrt{(\widehat{g} - g_1)^2 + (\widehat{g} - g_2)^2 + \ldots + (\widehat{g} - g_n)^2}.
+\|\vec{\epsilon}\|_2 = \sqrt{(\widehat{g} - g_1)^2 + (\widehat{g} - g_2)^2 + \cdots + (\widehat{g} - g_n)^2}
 $$
-
 :::
-
-This estimation problem has a really satisfying solution that you'll discover using the following set of exercises.
-
-::: {.callout-important}
-
-**Exercise 5:** Consider the following toy example. Suppose you measure $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$ as your data. Find the value of $\widehat{g}$ that minimizes the $L^2$ norm of the residuals.
-
-**Exercise 6:** More generally, suppose you have data $g_1, g_2, \ldots, g_n$. Find the value of $\widehat{g}$ that minimizes the $L^2$ norm of the residuals. Your answer should simplify to a simple formula in terms of $g_1, g_2, \ldots, g_n$.
-:::
-
-We can now state a very important principle in estimation theory:
-
-::: {.callout-tip}
-### Estimation = Minimization 
-
-Estimating a quantity from data is equivalent to minimizing the residuals with respect to a chosen norm.
-
-:::
-
-This is the primary method for estimating quantities from data. Once we have this observation, we can use techniques from optimization to solve estimation problems. All modern data science, machine learning, and artificial intelligence is based on this principle. For example, a neural net is trained by defining a loss function (which is a norm) and then minimizing the loss function with respect to the parameters of the neural net. A lot of research goes into defining the right loss function for a given problem and finding efficient algorithms to minimize the loss function.
-
-### $p=1$ norm
-
-Plugging in $p=1$ gives us the **Manhattan distance** (also called the taxicab norm):
-
-$$
-||\vec{\epsilon}||_1 = |\epsilon_1| + |\epsilon_2| + \ldots + |\epsilon_n|.
-$$
-
-Solving the estimation problem @eq-estimating-g with the $L^1$ norm gives us the following optimization problem:
 
 ::: {.callout-note}
+## Exercises: $L^2$ Estimation
 
+**Exercise 4:** Consider data $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$. Find the value of $\widehat{g}$ that minimizes $\|\vec{\epsilon}\|_2$.
+
+**Exercise 5:** For general data $g_1, g_2, \ldots, g_n$, find the minimizer $\widehat{g}$. (Hint: It's easier to minimize $\|\vec{\epsilon}\|_2^2$ instead. Why does this give the same answer?)
+:::
+
+
+### $L^1$ Norm: The Median
+
+The $L^1$ norm is the **Manhattan distance** (or taxicab norm):
+
+$$
+\|\vec{\epsilon}\|_1 = |\epsilon_1| + |\epsilon_2| + \cdots + |\epsilon_n|
+$$
+
+Unlike $L^2$, the $L^1$ norm treats all errors proportionally—a error twice as large contributes exactly twice as much to the total.
+
+::: {.callout-important}
 #### $L^1$ Estimation Problem
 
 Find $\widehat{g}$ that minimizes 
 
 $$
-||\vec{\epsilon}||_1 = |\widehat{g} - g_1| + |\widehat{g} - g_2| + \ldots + |\widehat{g} - g_n|.
+\|\vec{\epsilon}\|_1 = |\widehat{g} - g_1| + |\widehat{g} - g_2| + \cdots + |\widehat{g} - g_n|
 $$
-
 :::
-
-This estimation problem has a really satisfying solution that you'll discover using the following set of exercises.
-
-::: {.callout-important}
-
-**Exercise 7:** Consider the following toy example. Suppose you measure $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$ as your data. Find the value of $\widehat{g}$ that minimizes the $L^1$ norm of the residuals.
-
-**Exercise 8:** (Challenge) More generally, suppose you have data $g_1, g_2, \ldots, g_n$. Assume WLOG that $g_1 \le g_2 \le \ldots \le g_n$. Suppose $n$ is odd.
-Find the value of $\widehat{g}$ that minimizes the $L^1$ norm of the residuals. 
-
-**Exercise 9:** (Challenge) More generally, suppose you have data $g_1, g_2, \ldots, g_n$. Assume WLOG that $g_1 \le g_2 \le \ldots \le g_n$. Suppose $n$ is even.
-Find the value of $\widehat{g}$ that minimizes the $L^1$ norm of the residuals. 
-:::
-
-
-### $p = \infty$ norm
-
-One can show that 
-
-$$
-\lim_{p \to \infty} ||\vec{\epsilon}||_p = \max(|\epsilon_1|, |\epsilon_2|, \ldots, |\epsilon_n|).
-$$
 
 ::: {.callout-note}
+## Exercises: $L^1$ Estimation
 
+**Exercise 6:** Consider data $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$. Find the value of $\widehat{g}$ that minimizes $\|\vec{\epsilon}\|_1$. (Hint: Think geometrically—where should $\widehat{g}$ be relative to the data points?)
+
+**Exercise 7:** (Challenge) For general sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ odd, find the minimizer $\widehat{g}$.
+
+**Exercise 8:** (Challenge) For general sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ even, find the minimizer $\widehat{g}$. (Careful: the answer may not be unique!)
+:::
+
+
+### $L^\infty$ Norm: The Midrange
+
+As $p \to \infty$, the $L^p$ norm converges to the **maximum norm**:
+
+$$
+\|\vec{\epsilon}\|_\infty = \max(|\epsilon_1|, |\epsilon_2|, \ldots, |\epsilon_n|)
+$$
+
+This norm only cares about the single worst error—all other errors are irrelevant.
+
+::: {.callout-important}
 #### $L^\infty$ Estimation Problem
 
 Find $\widehat{g}$ that minimizes 
 
 $$
-||\vec{\epsilon}||_\infty = \max(|\widehat{g} - g_1|, |\widehat{g} - g_2|, \ldots, |\widehat{g} - g_n|).
+\|\vec{\epsilon}\|_\infty = \max(|\widehat{g} - g_1|, |\widehat{g} - g_2|, \ldots, |\widehat{g} - g_n|)
 $$
-
 :::
 
-::: {.callout-important}
+::: {.callout-note}
+## Exercises: $L^\infty$ Estimation
 
-**Exercise 10:** (Challenge) Prove that $\lim_{p \to \infty} ||\vec{\epsilon}||_p = \max(|\epsilon_1|, |\epsilon_2|, \ldots, |\epsilon_n|)$.
+**Exercise 9:** (Challenge) Prove that $\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)$.
 
-**Exercise 11:** Prove that $L^\infty$ is a norm.
+**Exercise 10:** Verify that $\|\cdot\|_\infty$ satisfies all three norm axioms.
 
-**Exercise 12:** Consider the following toy example. Suppose you measure $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$ as your data. Find the value of $\widehat{g}$ that minimizes the $L^\infty$ norm of the residuals.
+**Exercise 11:** Consider data $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$. Find the value of $\widehat{g}$ that minimizes $\|\vec{\epsilon}\|_\infty$.
 
-**Exercise 13:** More generally, suppose you have data $g_1, g_2, \ldots, g_n$. Assume WLOG that $g_1 \le g_2 \le \ldots \le g_n$. Find the value of $\widehat{g}$ that minimizes the $L^\infty$ norm of the residuals. 
+**Exercise 12:** For general sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$, find the minimizer $\widehat{g}$.
 :::
 
+::: {.callout-note}
 
-## Summary 
+## Exercises: Geometry
 
-And so we now have (at least) three different ways to estimate $g$ from the data $g_1, g_2, \ldots, g_n$. Applying these ideas to the data from the above experiment, we get the following estimates:
+**Exercise 13:** Plot the unit circles $\{\vec{x} \in \mathbb{R}^2 : \|\vec{x}\|_p = 1\}$ for $p = 1$, $p = 2$, and $p = \infty$. What shapes do you see?
+
+- $p = 1$: $|x| + |y| = 1$
+- $p = 2$: $x^2 + y^2 = 1$
+- $p = \infty$: $\max(|x|, |y|) = 1$
+
+Use Desmos to explore what happens as $p \to \infty$. What shape emerges? What happens for $p < 1$?
+:::
+
+## Summary: Three Norms, Three Statistics
+
+We've discovered a beautiful unification: three familiar statistics arise from minimizing three different norms.
+
+::: {.callout-tip}
+### Main Result
+
+| Norm | Estimator $\widehat{g}$ | Common Name |
+|------|------------------------|-------------|
+| $L^2$ | $\frac{1}{n}\sum_{i=1}^n g_i$ | **Mean** |
+| $L^1$ | middle value of sorted data | **Median** |
+| $L^\infty$ | $\frac{\min(g_i) + \max(g_i)}{2}$ | **Midrange** |
+:::
+
+Let's verify this with our gravitational acceleration data:
 
 ```{python}
+#| echo: false
 g_hat_L2 = np.mean(g_data)
 g_hat_L1 = np.median(g_data)
 g_hat_Linf = (np.min(g_data) + np.max(g_data)) / 2
 
-# table of results
-import pandas as pd
 results = pd.DataFrame({
-    "Method": ["L2 (mean)", "L1 (median)", "Linf (midrange)", "True value"],
-    "Estimate": [g_hat_L2, g_hat_L1, g_hat_Linf, g_true]
+    "Norm": ["L² (mean)", "L¹ (median)", "L∞ (midrange)", "True value"],
+    "Estimate": [f"{g_hat_L2:.4f}", f"{g_hat_L1:.4f}", f"{g_hat_Linf:.4f}", f"{g_true:.4f}"]
 })
-print(results)
+print(results.to_string(index=False))
 ```
 
-Notice that all three estimates are close but different. The next task for us is to understand the reasons to use one estimate over the other. This will take us into the world of probability and statistics.
+All three estimates are close to the true value, but they differ. Which should we prefer?
+
+Each has different properties:
+
+- **Mean ($L^2$):** Uses all data, but sensitive to outliers (one extreme value can pull it far off)
+- **Median ($L^1$):** Robust to outliers (up to half the data can be corrupted!), but ignores magnitudes
+- **Midrange ($L^\infty$):** Only uses extreme values, extremely sensitive to outliers
+
+The choice depends on what we know (or assume) about our measurement errors. This leads us to probability theory.
+
+
+## Looking Ahead
+
+We've seen that different norms lead to different estimators. But we haven't answered the fundamental question: **which norm should we use?**
+
+It turns out that the $L^2$ norm (and hence the mean) has a special status. In the next lecture, we'll introduce the **normal distribution** and see that:
+
+1. If measurement errors follow a normal distribution, then the $L^2$ estimator is optimal in a precise sense (**maximum likelihood**).
+2. This connection explains why the mean and the method of least squares are so ubiquitous in statistics.
+
+We'll also see how this framework extends from estimating a single constant to fitting lines and more complex models—bringing us back to the regression problem from Day 1.
