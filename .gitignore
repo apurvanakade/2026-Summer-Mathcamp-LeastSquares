@@ -3,6 +3,5 @@
 **/*.jupyter_cache
 .DS_Store
 *.tex
-day1_files/
 python/ceres_files/
 *.pdf
