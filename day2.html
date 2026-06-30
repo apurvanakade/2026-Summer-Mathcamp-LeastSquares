@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Apurva Nakade">
+<meta name="dcterms.date" content="2026-06-01">
+
+<title>Day 2 - Norms and Estimators – How to derive the bell curve</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-05ad5c04182ae40a1da91fd291b82df0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="Day 2 - Norms and Estimators – How to derive the bell curve">
+<meta property="og:description" content="Canada/USA Mathcamp 2026">
+<meta property="og:site_name" content="How to derive the bell curve">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">How to derive the bell curve</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./day1.html"> 
+<span class="menu-text">Day 1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./day2.html" aria-current="page"> 
+<span class="menu-text">Day 2</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./day3.qmd"> 
+<span class="menu-text">Day 3</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./day4.pdf"> 
+<span class="menu-text">Day 4</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./day4 copy.html"> 
+<span class="menu-text">Day 4’</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./day5.html"> 
+<span class="menu-text">Day 5</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/apurvanakade/"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#from-exact-to-approximate-fits" id="toc-from-exact-to-approximate-fits" class="nav-link active" data-scroll-target="#from-exact-to-approximate-fits">From Exact to Approximate Fits</a></li>
+  <li><a href="#estimating-a-constant" id="toc-estimating-a-constant" class="nav-link" data-scroll-target="#estimating-a-constant">Estimating a Constant</a></li>
+  <li><a href="#measuring-size-norms" id="toc-measuring-size-norms" class="nav-link" data-scroll-target="#measuring-size-norms">Measuring Size: Norms</a>
+  <ul class="collapse">
+  <li><a href="#definition-and-properties" id="toc-definition-and-properties" class="nav-link" data-scroll-target="#definition-and-properties">Definition and Properties</a></li>
+  <li><a href="#the-lp-family" id="toc-the-lp-family" class="nav-link" data-scroll-target="#the-lp-family">The <span class="math inline">L^p</span> Family</a></li>
+  </ul></li>
+  <li><a href="#three-estimators" id="toc-three-estimators" class="nav-link" data-scroll-target="#three-estimators">Three Estimators</a>
+  <ul class="collapse">
+  <li><a href="#l2-norm-the-mean" id="toc-l2-norm-the-mean" class="nav-link" data-scroll-target="#l2-norm-the-mean"><span class="math inline">L^2</span> Norm: The Mean</a></li>
+  <li><a href="#l1-norm-the-median" id="toc-l1-norm-the-median" class="nav-link" data-scroll-target="#l1-norm-the-median"><span class="math inline">L^1</span> Norm: The Median</a></li>
+  <li><a href="#linfty-norm-the-midrange" id="toc-linfty-norm-the-midrange" class="nav-link" data-scroll-target="#linfty-norm-the-midrange"><span class="math inline">L^\infty</span> Norm: The Midrange</a></li>
+  </ul></li>
+  <li><a href="#summary-three-norms-three-statistics" id="toc-summary-three-norms-three-statistics" class="nav-link" data-scroll-target="#summary-three-norms-three-statistics">Summary: Three Norms, Three Statistics</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="day2.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Day 2 - Norms and Estimators</h1>
+<p class="subtitle lead">Canada/USA Mathcamp 2026</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Apurva Nakade </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 1, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="from-exact-to-approximate-fits" class="level2">
+<h2 class="anchored" data-anchor-id="from-exact-to-approximate-fits">From Exact to Approximate Fits</h2>
+<p>In the previous lecture, we saw that fitting a polynomial exactly through all data points leads to <strong>overfitting</strong>—the estimates become extremely sensitive to small changes in the data. The solution is to allow approximate fits, where our model doesn’t pass through every point exactly.</p>
+<p>Formally, instead of requiring <span class="math inline">y_i = f(x_i)</span>, we introduce <strong>residuals</strong> <span class="math inline">\epsilon_1, \epsilon_2, \ldots, \epsilon_n</span> and write</p>
+<p><span class="math display">
+y_i = f(x_i) + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n.
+</span></p>
+<p>The residual <span class="math inline">\epsilon_i</span> measures how much the model prediction <span class="math inline">f(x_i)</span> differs from the observed value <span class="math inline">y_i</span>. A good model should make the residuals “small”—but what exactly does “small” mean for a collection of <span class="math inline">n</span> numbers?</p>
+<p>This question leads us to a fundamental principle:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The Core Idea: Estimation = Minimization
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Estimating a quantity from data is equivalent to minimizing the residuals with respect to a chosen notion of “size.”</p>
+<p>Different notions of size lead to different estimators. This is the foundation of modern data science, machine learning, and AI. For example, training a neural network means choosing a loss function (a way to measure residual size) and minimizing it with respect to the network’s parameters.</p>
+</div>
+</div>
+<p>Today we’ll explore this principle through the simplest possible estimation problem: estimating a constant from repeated measurements.</p>
+</section>
+<section id="estimating-a-constant" class="level2">
+<h2 class="anchored" data-anchor-id="estimating-a-constant">Estimating a Constant</h2>
+<p>Suppose you run an experiment to measure the gravitational acceleration <span class="math inline">g</span> at Earth’s surface. Due to measurement error, each trial gives a slightly different value. Here are 100 measurements (in m/s²):</p>
+<div id="68c58a07" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-stdout">
+<pre><code>First 10 measurements: [ 9.986  9.85   9.908 10.034  9.997  9.712  9.905  9.795  9.8    9.851]
+Min: 9.555, Max: 10.037</code></pre>
+</div>
+</div>
+<p>What single value <span class="math inline">\widehat{g}</span> best represents the “true” gravitational acceleration?</p>
+<p>In estimation language, we want to find <span class="math inline">\widehat{g}</span> such that</p>
+<p><span id="eq-estimating-g"><span class="math display">
+g_i = \widehat{g} + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
+\tag{1}</span></span></p>
+<p>where the residuals <span class="math inline">\epsilon_i = g_i - \widehat{g}</span> are as “small” as possible.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Connection to Regression
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is actually a regression problem in disguise! We’re fitting a “degree 0 polynomial” (a constant function) to the data. The techniques we develop here will generalize to fitting lines, parabolas, and more complex models.</p>
+</div>
+</div>
+</section>
+<section id="measuring-size-norms" class="level2">
+<h2 class="anchored" data-anchor-id="measuring-size-norms">Measuring Size: Norms</h2>
+<p>To make “small residuals” precise, we need to measure the size of the residual vector</p>
+<p><span class="math display">
+\vec{\epsilon} = \begin{bmatrix}\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n\end{bmatrix} \in \mathbb{R}^n.
+</span></p>
+<p>In mathematics, a function that measures vector size is called a <strong>norm</strong>.</p>
+<section id="definition-and-properties" class="level3">
+<h3 class="anchored" data-anchor-id="definition-and-properties">Definition and Properties</h3>
+<p>A <strong>norm</strong> on <span class="math inline">\mathbb{R}^n</span> is a function <span class="math inline">\|\cdot\|: \mathbb{R}^n \to \mathbb{R}</span> satisfying:</p>
+<ol type="1">
+<li><strong>Positivity:</strong> <span class="math inline">\|\vec{x}\| \geq 0</span> for all <span class="math inline">\vec{x}</span>, with <span class="math inline">\|\vec{x}\| = 0</span> if and only if <span class="math inline">\vec{x} = \vec{0}</span>.</li>
+<li><strong>Scaling:</strong> <span class="math inline">\|\alpha \vec{x}\| = |\alpha| \cdot \|\vec{x}\|</span> for all scalars <span class="math inline">\alpha</span> and vectors <span class="math inline">\vec{x}</span>.</li>
+<li><strong>Triangle inequality:</strong> <span class="math inline">\|\vec{x} + \vec{y}\| \leq \|\vec{x}\| + \|\vec{y}\|</span> for all <span class="math inline">\vec{x}, \vec{y}</span>.</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Why these axioms?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Positivity</strong> is natural: size should be non-negative, and only the zero vector has zero size.</li>
+<li><strong>Scaling</strong> says that stretching a vector by factor <span class="math inline">\alpha</span> stretches its size by <span class="math inline">|\alpha|</span>.</li>
+<li><strong>Triangle inequality</strong> is the key property that allows us to do analysis (calculus) with norms. It says the “direct path” is never longer than going through an intermediate point.</li>
+</ul>
+<p>If we drop the requirement that <span class="math inline">\|\vec{x}\| = 0 \Rightarrow \vec{x} = \vec{0}</span>, we get a <strong>semi-norm</strong>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-lp-family" class="level3">
+<h3 class="anchored" data-anchor-id="the-lp-family">The <span class="math inline">L^p</span> Family</h3>
+<p>The most important family of norms is the <strong><span class="math inline">L^p</span> norms</strong>, defined for <span class="math inline">p \geq 1</span>:</p>
+<p><span class="math display">
+\|\vec{x}\|_p = \left( |x_1|^p + |x_2|^p + \cdots + |x_n|^p \right)^{1/p}
+</span></p>
+<p>Different values of <span class="math inline">p</span> weight errors differently:</p>
+<ul>
+<li><strong>Small <span class="math inline">p</span>:</strong> treats all errors more equally</li>
+<li><strong>Large <span class="math inline">p</span>:</strong> increasingly dominated by the largest errors</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^p</span> Norms
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 1:</strong> Prove that <span class="math inline">\|\cdot\|_1</span> satisfies all three norm axioms.</p>
+<p><strong>Exercise 2:</strong> Prove that <span class="math inline">\|\cdot\|_2</span> satisfies all three norm axioms.</p>
+<p><strong>Exercise 3:</strong> (Challenge) Prove that <span class="math inline">\|\cdot\|_p</span> is a norm for all <span class="math inline">p \geq 1</span>. (Hint: Look up Minkowski’s inequality.)</p>
+</div>
+</div>
+</section>
+</section>
+<section id="three-estimators" class="level2">
+<h2 class="anchored" data-anchor-id="three-estimators">Three Estimators</h2>
+<p>We now apply three different <span class="math inline">L^p</span> norms to our estimation problem and discover that each leads to a familiar statistic.</p>
+<section id="l2-norm-the-mean" class="level3">
+<h3 class="anchored" data-anchor-id="l2-norm-the-mean"><span class="math inline">L^2</span> Norm: The Mean</h3>
+<p>The <span class="math inline">L^2</span> norm is the <strong>Euclidean distance</strong>:</p>
+<p><span class="math display">
+\|\vec{\epsilon}\|_2 = \sqrt{\epsilon_1^2 + \epsilon_2^2 + \cdots + \epsilon_n^2}
+</span></p>
+<p>Because squaring amplifies large values, the <span class="math inline">L^2</span> norm penalizes large errors heavily.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><span class="math inline">L^2</span> Estimation Problem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Find <span class="math inline">\widehat{g}</span> that minimizes</p>
+<p><span class="math display">
+\|\vec{\epsilon}\|_2 = \sqrt{(\widehat{g} - g_1)^2 + (\widehat{g} - g_2)^2 + \cdots + (\widehat{g} - g_n)^2}
+</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^2</span> Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 4:</strong> Consider data <span class="math inline">g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2</span>. Find the value of <span class="math inline">\widehat{g}</span> that minimizes <span class="math inline">\|\vec{\epsilon}\|_2</span>.</p>
+<p><strong>Exercise 5:</strong> For general data <span class="math inline">g_1, g_2, \ldots, g_n</span>, find the minimizer <span class="math inline">\widehat{g}</span>. (Hint: It’s easier to minimize <span class="math inline">\|\vec{\epsilon}\|_2^2</span> instead. Why does this give the same answer?)</p>
+</div>
+</div>
+</section>
+<section id="l1-norm-the-median" class="level3">
+<h3 class="anchored" data-anchor-id="l1-norm-the-median"><span class="math inline">L^1</span> Norm: The Median</h3>
+<p>The <span class="math inline">L^1</span> norm is the <strong>Manhattan distance</strong> (or taxicab norm):</p>
+<p><span class="math display">
+\|\vec{\epsilon}\|_1 = |\epsilon_1| + |\epsilon_2| + \cdots + |\epsilon_n|
+</span></p>
+<p>Unlike <span class="math inline">L^2</span>, the <span class="math inline">L^1</span> norm treats all errors proportionally—a error twice as large contributes exactly twice as much to the total.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><span class="math inline">L^1</span> Estimation Problem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Find <span class="math inline">\widehat{g}</span> that minimizes</p>
+<p><span class="math display">
+\|\vec{\epsilon}\|_1 = |\widehat{g} - g_1| + |\widehat{g} - g_2| + \cdots + |\widehat{g} - g_n|
+</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^1</span> Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 6:</strong> Consider data <span class="math inline">g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2</span>. Find the value of <span class="math inline">\widehat{g}</span> that minimizes <span class="math inline">\|\vec{\epsilon}\|_1</span>. (Hint: Think geometrically—where should <span class="math inline">\widehat{g}</span> be relative to the data points?)</p>
+<p><strong>Exercise 7:</strong> (Challenge) For general sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span> with <span class="math inline">n</span> odd, find the minimizer <span class="math inline">\widehat{g}</span>.</p>
+<p><strong>Exercise 8:</strong> (Challenge) For general sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span> with <span class="math inline">n</span> even, find the minimizer <span class="math inline">\widehat{g}</span>. (Careful: the answer may not be unique!)</p>
+</div>
+</div>
+</section>
+<section id="linfty-norm-the-midrange" class="level3">
+<h3 class="anchored" data-anchor-id="linfty-norm-the-midrange"><span class="math inline">L^\infty</span> Norm: The Midrange</h3>
+<p>As <span class="math inline">p \to \infty</span>, the <span class="math inline">L^p</span> norm converges to the <strong>maximum norm</strong>:</p>
+<p><span class="math display">
+\|\vec{\epsilon}\|_\infty = \max(|\epsilon_1|, |\epsilon_2|, \ldots, |\epsilon_n|)
+</span></p>
+<p>This norm only cares about the single worst error—all other errors are irrelevant.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><span class="math inline">L^\infty</span> Estimation Problem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Find <span class="math inline">\widehat{g}</span> that minimizes</p>
+<p><span class="math display">
+\|\vec{\epsilon}\|_\infty = \max(|\widehat{g} - g_1|, |\widehat{g} - g_2|, \ldots, |\widehat{g} - g_n|)
+</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^\infty</span> Estimation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 9:</strong> (Challenge) Prove that <span class="math inline">\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)</span>.</p>
+<p><strong>Exercise 10:</strong> Verify that <span class="math inline">\|\cdot\|_\infty</span> satisfies all three norm axioms.</p>
+<p><strong>Exercise 11:</strong> Consider data <span class="math inline">g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2</span>. Find the value of <span class="math inline">\widehat{g}</span> that minimizes <span class="math inline">\|\vec{\epsilon}\|_\infty</span>.</p>
+<p><strong>Exercise 12:</strong> For general sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span>, find the minimizer <span class="math inline">\widehat{g}</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Geometry
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 13:</strong> Plot the unit circles <span class="math inline">\{\vec{x} \in \mathbb{R}^2 : \|\vec{x}\|_p = 1\}</span> for <span class="math inline">p = 1</span>, <span class="math inline">p = 2</span>, and <span class="math inline">p = \infty</span>. What shapes do you see?</p>
+<ul>
+<li><span class="math inline">p = 1</span>: <span class="math inline">|x| + |y| = 1</span></li>
+<li><span class="math inline">p = 2</span>: <span class="math inline">x^2 + y^2 = 1</span></li>
+<li><span class="math inline">p = \infty</span>: <span class="math inline">\max(|x|, |y|) = 1</span></li>
+</ul>
+<p>Use Desmos to explore what happens as <span class="math inline">p \to \infty</span>. What shape emerges? What happens for <span class="math inline">p &lt; 1</span>?</p>
+</div>
+</div>
+</section>
+</section>
+<section id="summary-three-norms-three-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="summary-three-norms-three-statistics">Summary: Three Norms, Three Statistics</h2>
+<p>We’ve discovered a beautiful unification: three familiar statistics arise from minimizing three different norms.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Main Result
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Norm</th>
+<th>Estimator <span class="math inline">\widehat{g}</span></th>
+<th>Common Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">L^2</span></td>
+<td><span class="math inline">\frac{1}{n}\sum_{i=1}^n g_i</span></td>
+<td><strong>Mean</strong></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">L^1</span></td>
+<td>middle value of sorted data</td>
+<td><strong>Median</strong></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">L^\infty</span></td>
+<td><span class="math inline">\frac{\min(g_i) + \max(g_i)}{2}</span></td>
+<td><strong>Midrange</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let’s verify this with our gravitational acceleration data:</p>
+<div id="82e16cef" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-stdout">
+<pre><code>         Norm Estimate
+    L² (mean)   9.8160
+  L¹ (median)   9.8194
+L∞ (midrange)   9.7958
+   True value   9.8100</code></pre>
+</div>
+</div>
+<p>All three estimates are close to the true value, but they differ. Which should we prefer?</p>
+<p>Each has different properties:</p>
+<ul>
+<li><strong>Mean (<span class="math inline">L^2</span>):</strong> Uses all data, but sensitive to outliers (one extreme value can pull it far off)</li>
+<li><strong>Median (<span class="math inline">L^1</span>):</strong> Robust to outliers (up to half the data can be corrupted!), but ignores magnitudes</li>
+<li><strong>Midrange (<span class="math inline">L^\infty</span>):</strong> Only uses extreme values, extremely sensitive to outliers</li>
+</ul>
+<p>The choice depends on what we know (or assume) about our measurement errors. This leads us to probability theory.</p>
+</section>
+<section id="looking-ahead" class="level2">
+<h2 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h2>
+<p>We’ve seen that different norms lead to different estimators. But we haven’t answered the fundamental question: <strong>which norm should we use?</strong></p>
+<p>It turns out that the <span class="math inline">L^2</span> norm (and hence the mean) has a special status. In the next lecture, we’ll introduce the <strong>normal distribution</strong> and see that:</p>
+<ol type="1">
+<li>If measurement errors follow a normal distribution, then the <span class="math inline">L^2</span> estimator is optimal in a precise sense (<strong>maximum likelihood</strong>).</li>
+<li>This connection explains why the mean and the method of least squares are so ubiquitous in statistics.</li>
+</ol>
+<p>We’ll also see how this framework extends from estimating a single constant to fitting lines and more complex models—bringing us back to the regression problem from Day 1.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/apurvanakade\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

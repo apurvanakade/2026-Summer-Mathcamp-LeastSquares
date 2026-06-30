@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Apurva Nakade">
+<meta name="dcterms.date" content="2026-06-01">
+
+<title>Day 3 - Random Variables and Distributions – How to derive the bell curve</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-05ad5c04182ae40a1da91fd291b82df0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="Day 3 - Random Variables and Distributions – How to derive the bell curve">
+<meta property="og:description" content="Canada/USA Mathcamp 2026">
+<meta property="og:image" content="https://apurvanakade.github.io/day3 copy_files/figure-html/cell-2-output-1.png">
+<meta property="og:site_name" content="How to derive the bell curve">
+<meta property="og:image:height" content="748">
+<meta property="og:image:width" content="1324">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">How to derive the bell curve</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./day1.html"> 
+<span class="menu-text">Day 1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./day2.html"> 
+<span class="menu-text">Day 2</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./day3.pdf"> 
+<span class="menu-text">Day 3</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./day3 copy.html" aria-current="page"> 
+<span class="menu-text">Day 3’</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/apurvanakade/"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#from-data-to-randomness" id="toc-from-data-to-randomness" class="nav-link active" data-scroll-target="#from-data-to-randomness">From Data to Randomness</a></li>
+  <li><a href="#discrete-random-variables" id="toc-discrete-random-variables" class="nav-link" data-scroll-target="#discrete-random-variables">Discrete Random Variables</a>
+  <ul class="collapse">
+  <li><a href="#a-loaded-die" id="toc-a-loaded-die" class="nav-link" data-scroll-target="#a-loaded-die">A Loaded Die</a></li>
+  </ul></li>
+  <li><a href="#continuous-random-variables" id="toc-continuous-random-variables" class="nav-link" data-scroll-target="#continuous-random-variables">Continuous Random Variables</a>
+  <ul class="collapse">
+  <li><a href="#the-uniform-distribution" id="toc-the-uniform-distribution" class="nav-link" data-scroll-target="#the-uniform-distribution">The Uniform Distribution</a></li>
+  <li><a href="#other-continuous-distributions" id="toc-other-continuous-distributions" class="nav-link" data-scroll-target="#other-continuous-distributions">Other Continuous Distributions</a></li>
+  </ul></li>
+  <li><a href="#independence" id="toc-independence" class="nav-link" data-scroll-target="#independence">Independence</a>
+  <ul class="collapse">
+  <li><a href="#discrete-case" id="toc-discrete-case" class="nav-link" data-scroll-target="#discrete-case">Discrete Case</a></li>
+  <li><a href="#continuous-case" id="toc-continuous-case" class="nav-link" data-scroll-target="#continuous-case">Continuous Case</a></li>
+  </ul></li>
+  <li><a href="#multiple-independent-measurements" id="toc-multiple-independent-measurements" class="nav-link" data-scroll-target="#multiple-independent-measurements">Multiple Independent Measurements</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="day3-copy.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Day 3 - Random Variables and Distributions</h1>
+<p class="subtitle lead">Canada/USA Mathcamp 2026</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Apurva Nakade </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 1, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="from-data-to-randomness" class="level2">
+<h2 class="anchored" data-anchor-id="from-data-to-randomness">From Data to Randomness</h2>
+<p>In the previous lectures, we treated our measurements as fixed numbers and asked how to estimate an unknown quantity from them. But where does the variation in our data come from?</p>
+<p>In the gravitational acceleration experiment, each measurement differed slightly from the true value due to random errors—tiny fluctuations in equipment, air currents, timing, etc. To understand <em>why</em> certain estimators (like the mean) work better than others, we need to model this randomness mathematically.</p>
+<p>Today we develop the language of <strong>random variables</strong> and <strong>distributions</strong>. As before, you’ll discover the key ideas through exercises.</p>
+</section>
+<section id="discrete-random-variables" class="level2">
+<h2 class="anchored" data-anchor-id="discrete-random-variables">Discrete Random Variables</h2>
+<p>Let’s start with a familiar example.</p>
+<section id="a-loaded-die" class="level3">
+<h3 class="anchored" data-anchor-id="a-loaded-die">A Loaded Die</h3>
+<p>Suppose you have a six-sided die that’s been tampered with. After rolling it many times, you record the following frequencies:</p>
+<div id="b161f08a" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="day3 copy_files/figure-html/cell-2-output-1.png" width="662" height="374" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The outcome of rolling this die is a <strong>random variable</strong>—a quantity whose value is determined by chance. We typically denote random variables by capital letters like <span class="math inline">X</span>.</p>
+<p>A random variable is completely described by its <strong>distribution</strong>: the list of possible values and their probabilities.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Discrete Distributions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 1:</strong> Let <span class="math inline">X</span> be the outcome of rolling the loaded die above.</p>
+<ol type="a">
+<li>Write down <span class="math inline">P(X = k)</span> for each <span class="math inline">k \in \{1, 2, 3, 4, 5, 6\}</span>.</li>
+<li>Verify that <span class="math inline">\sum_{k=1}^{6} P(X = k) = 1</span>. Why must this be true?</li>
+<li>Compute <span class="math inline">P(X \leq 3)</span> and <span class="math inline">P(X &gt; 4)</span>.</li>
+</ol>
+<p><strong>Exercise 2:</strong> You flip a fair coin 3 times. Let <span class="math inline">Y</span> be the number of heads.</p>
+<ol type="a">
+<li>List all 8 possible outcomes (HHH, HHT, …).</li>
+<li>Find <span class="math inline">P(Y = k)</span> for <span class="math inline">k = 0, 1, 2, 3</span>.</li>
+<li>What is <span class="math inline">P(Y \geq 2)</span>?</li>
+</ol>
+<p><strong>Exercise 3:</strong> Let <span class="math inline">X</span> be a random variable taking values <span class="math inline">1, 2, \ldots, n</span> with <span class="math inline">P(X = k) = \frac{k}{c}</span> for some constant <span class="math inline">c</span>.</p>
+<ol type="a">
+<li>Find <span class="math inline">c</span> in terms of <span class="math inline">n</span>.</li>
+<li>Compute <span class="math inline">P(X \leq n/2)</span> when <span class="math inline">n = 10</span>.</li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+<section id="continuous-random-variables" class="level2">
+<h2 class="anchored" data-anchor-id="continuous-random-variables">Continuous Random Variables</h2>
+<p>Discrete random variables take values in a finite (or countable) set. But many quantities—like measurement errors, waiting times, or positions—can take any real value in some interval.</p>
+<section id="the-uniform-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="the-uniform-distribution">The Uniform Distribution</h3>
+<p>The simplest continuous distribution is the <strong>uniform distribution</strong> on an interval <span class="math inline">[a, b]</span>, where every value is “equally likely.”</p>
+<p>But what does “equally likely” mean when there are infinitely many values? We can’t assign a positive probability to each point (they’d sum to infinity). Instead, we describe probabilities using a <strong>probability density function (pdf)</strong>.</p>
+<p>For the uniform distribution on <span class="math inline">[a, b]</span>:</p>
+<p><span class="math display">
+f(x) = \begin{cases} \frac{1}{b-a} &amp; \text{if } a \leq x \leq b \\ 0 &amp; \text{otherwise} \end{cases}
+</span></p>
+<div id="94bb29c1" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="day3 copy_files/figure-html/cell-3-output-1.png" width="662" height="374" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The key idea: <strong>probability = area under the density curve</strong>.</p>
+<p><span class="math display">
+P(c \leq X \leq d) = \int_c^d f(x) \, dx
+</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Uniform Distribution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 4:</strong> Let <span class="math inline">X</span> be uniformly distributed on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>What is <span class="math inline">P(X \leq 0.5)</span>?</li>
+<li>What is <span class="math inline">P(0.25 \leq X \leq 0.75)</span>?</li>
+<li>What is <span class="math inline">P(X = 0.5)</span>? (Hint: what’s the area of a line segment?)</li>
+</ol>
+<p><strong>Exercise 5:</strong> Let <span class="math inline">X</span> be uniformly distributed on <span class="math inline">[a, b]</span>.</p>
+<ol type="a">
+<li>Verify that <span class="math inline">\int_{-\infty}^{\infty} f(x) \, dx = 1</span>.</li>
+<li>Compute <span class="math inline">P(X \leq \frac{a+b}{2})</span>.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="other-continuous-distributions" class="level3">
+<h3 class="anchored" data-anchor-id="other-continuous-distributions">Other Continuous Distributions</h3>
+<p>What if some values are more likely than others? Consider a density that increases linearly:</p>
+<p><span class="math display">
+f(x) = \begin{cases} cx &amp; \text{if } 0 \leq x \leq 1 \\ 0 &amp; \text{otherwise} \end{cases}
+</span></p>
+<div id="2f11ed09" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="day3 copy_files/figure-html/cell-4-output-1.png" width="1142" height="325" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Other Densities
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 6:</strong> Let <span class="math inline">X</span> have density <span class="math inline">f(x) = cx</span> on <span class="math inline">[0, 1]</span> (and <span class="math inline">0</span> elsewhere).</p>
+<ol type="a">
+<li>Find the constant <span class="math inline">c</span> that makes this a valid pdf.</li>
+<li>Compute <span class="math inline">P(X \leq 0.5)</span>.</li>
+<li>Compute <span class="math inline">P(X \geq 0.5)</span>. Verify that your answers to (b) and (c) sum to 1.</li>
+</ol>
+<p><strong>Exercise 7:</strong> Let <span class="math inline">X</span> have density <span class="math inline">f(x) = c(1-x)</span> on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>Find <span class="math inline">c</span>.</li>
+<li>Compute <span class="math inline">P(X \leq 0.5)</span>.</li>
+<li>Compare with Exercise 6. What’s the relationship between these two distributions?</li>
+</ol>
+<p><strong>Exercise 8:</strong> Let <span class="math inline">X</span> have density <span class="math inline">f(x) = c \cdot x(1-x)</span> on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>Find <span class="math inline">c</span>.</li>
+<li>Where is the density maximized?</li>
+<li>Compute <span class="math inline">P(0.25 \leq X \leq 0.75)</span>.</li>
+</ol>
+<p><strong>Exercise 9:</strong> Let <span class="math inline">X</span> have density <span class="math inline">f(x) = c \cdot x^2</span> on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>Find <span class="math inline">c</span>.</li>
+<li>Compute <span class="math inline">P(X \leq 0.5)</span>.</li>
+<li>Compare this to your answer in Exercise 6(b). Which distribution puts more weight near <span class="math inline">x = 1</span>?</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The Beta Family
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The densities <span class="math inline">f(x) \propto x^{a}(1-x)^{b}</span> on <span class="math inline">[0,1]</span> form a family called the <strong>Beta distributions</strong>. They’re useful for modeling random quantities that are bounded between 0 and 1, like probabilities themselves. The exercises above correspond to:</p>
+<ul>
+<li>Exercise 6: <span class="math inline">\text{Beta}(2, 1)</span></li>
+<li>Exercise 7: <span class="math inline">\text{Beta}(1, 2)</span></li>
+<li>Exercise 8: <span class="math inline">\text{Beta}(2, 2)</span></li>
+<li>Exercise 9: <span class="math inline">\text{Beta}(3, 1)</span></li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="independence" class="level2">
+<h2 class="anchored" data-anchor-id="independence">Independence</h2>
+<p>When we take multiple measurements, we usually assume they don’t influence each other—knowing that the first measurement was 9.82 m/s² doesn’t change the probabilities for the second measurement. This concept is called <strong>independence</strong>.</p>
+<section id="discrete-case" class="level3">
+<h3 class="anchored" data-anchor-id="discrete-case">Discrete Case</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Discovering Independence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 10:</strong> Flip a fair coin twice. Let <span class="math inline">X</span> be the first result (1 for heads, 0 for tails) and <span class="math inline">Y</span> the second.</p>
+<ol type="a">
+<li>List all four outcomes and their probabilities.</li>
+<li>Compute <span class="math inline">P(X = 1)</span> and <span class="math inline">P(Y = 1)</span>.</li>
+<li>Compute <span class="math inline">P(X = 1 \text{ and } Y = 1)</span>.</li>
+<li>Verify that <span class="math inline">P(X = 1 \text{ and } Y = 1) = P(X = 1) \cdot P(Y = 1)</span>.</li>
+<li>Check that this relationship holds for all four combinations of values of <span class="math inline">X</span> and <span class="math inline">Y</span>.</li>
+</ol>
+<p><strong>Exercise 11:</strong> Roll a fair die twice. Let <span class="math inline">X</span> be the first roll and <span class="math inline">Y</span> the second.</p>
+<ol type="a">
+<li>What is <span class="math inline">P(X = 3 \text{ and } Y = 5)</span>?</li>
+<li>What is <span class="math inline">P(X = 3) \cdot P(Y = 5)</span>?</li>
+<li>Are these equal? Is this what you’d expect?</li>
+</ol>
+<p><strong>Exercise 12:</strong> Draw two cards from a standard deck <em>without replacement</em>. Let <span class="math inline">X = 1</span> if the first card is an ace (0 otherwise), and <span class="math inline">Y = 1</span> if the second card is an ace.</p>
+<ol type="a">
+<li>Compute <span class="math inline">P(X = 1)</span>.</li>
+<li>Compute <span class="math inline">P(X = 1 \text{ and } Y = 1)</span>. (Hint: use <span class="math inline">P(A \text{ and } B) = P(A) \cdot P(B \mid A)</span>.)</li>
+<li>Compute <span class="math inline">P(X = 1) \cdot P(Y = 1)</span>.</li>
+<li>Are (b) and (c) equal? Explain why this makes sense.</li>
+</ol>
+<p><strong>Exercise 13:</strong> Based on the previous exercises, propose a definition: when should we call two discrete random variables <strong>independent</strong>?</p>
+</div>
+</div>
+<p>Two discrete random variables <span class="math inline">X</span> and <span class="math inline">Y</span> are <strong>independent</strong> if:</p>
+<p><span class="math display">
+P(X = x \text{ and } Y = y) = P(X = x) \cdot P(Y = y) \quad \text{for all } x, y
+</span></p>
+<p>In words: knowing the value of <span class="math inline">X</span> tells you nothing about <span class="math inline">Y</span>, and vice versa. The joint probability factors as a product of the individual probabilities.</p>
+</section>
+<section id="continuous-case" class="level3">
+<h3 class="anchored" data-anchor-id="continuous-case">Continuous Case</h3>
+<p>For continuous random variables, independence means the joint density factors:</p>
+<p><span class="math display">
+f_{X,Y}(x, y) = f_X(x) \cdot f_Y(y)
+</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Independence for Continuous Variables
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 14:</strong> Let <span class="math inline">X</span> and <span class="math inline">Y</span> be independent, both uniformly distributed on <span class="math inline">[0, 1]</span>. The pair <span class="math inline">(X, Y)</span> is a random point in the unit square.</p>
+<ol type="a">
+<li>What is <span class="math inline">P(X \leq 0.5 \text{ and } Y \leq 0.5)</span>?</li>
+<li>Sketch the region where <span class="math inline">X \leq 0.5</span> and <span class="math inline">Y \leq 0.5</span> in the unit square. Verify your answer to (a) by computing the area.</li>
+</ol>
+<p><strong>Exercise 15:</strong> Let <span class="math inline">X</span> and <span class="math inline">Y</span> be independent, both uniformly distributed on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>What is <span class="math inline">P(X \leq 0.3 \text{ and } Y \geq 0.7)</span>?</li>
+<li>What is <span class="math inline">P(X \leq Y)</span>? (Hint: sketch the region in the unit square.)</li>
+</ol>
+<p><strong>Exercise 16:</strong> Let <span class="math inline">X</span> and <span class="math inline">Y</span> be independent, both with density <span class="math inline">f(x) = 2x</span> on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>What is the joint density <span class="math inline">f_{X,Y}(x, y)</span>?</li>
+<li>Compute <span class="math inline">P(X \leq 0.5 \text{ and } Y \leq 0.5)</span>.</li>
+</ol>
+<p><strong>Exercise 17:</strong> (Challenge) Let <span class="math inline">X</span> and <span class="math inline">Y</span> be independent, both uniformly distributed on <span class="math inline">[0, 1]</span>. Let <span class="math inline">M = \max(X, Y)</span>.</p>
+<ol type="a">
+<li>Show that <span class="math inline">P(M \leq t) = P(X \leq t \text{ and } Y \leq t) = t^2</span> for <span class="math inline">t \in [0, 1]</span>.</li>
+<li>Find the density of <span class="math inline">M</span>. (Hint: differentiate.)</li>
+<li>What distribution from our earlier exercises does this match?</li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+<section id="multiple-independent-measurements" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-independent-measurements">Multiple Independent Measurements</h2>
+<p>The power of independence becomes clear when we have many measurements.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: Many Measurements
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Exercise 18:</strong> Suppose you flip a fair coin 5 times. Let <span class="math inline">X_1, X_2, X_3, X_4, X_5</span> be the results (1 for heads, 0 for tails), and assume they are independent.</p>
+<ol type="a">
+<li>What is <span class="math inline">P(X_1 = 1 \text{ and } X_2 = 1 \text{ and } X_3 = 1 \text{ and } X_4 = 1 \text{ and } X_5 = 1)</span>?</li>
+<li>What is <span class="math inline">P(X_1 = 0 \text{ and } X_2 = 1 \text{ and } X_3 = 0 \text{ and } X_4 = 1 \text{ and } X_5 = 0)</span>?</li>
+<li>What is the probability of any specific sequence of 5 flips?</li>
+</ol>
+<p><strong>Exercise 19:</strong> Suppose you make 3 independent measurements <span class="math inline">X_1, X_2, X_3</span>, each uniformly distributed on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>What is <span class="math inline">P(X_1 \leq 0.5 \text{ and } X_2 \leq 0.5 \text{ and } X_3 \leq 0.5)</span>?</li>
+<li>What is <span class="math inline">P(\text{all three measurements are} \leq 0.5)</span>?</li>
+<li>What is <span class="math inline">P(\text{at least one measurement is} &gt; 0.5)</span>?</li>
+</ol>
+<p><strong>Exercise 20:</strong> Let <span class="math inline">X_1, X_2, \ldots, X_n</span> be independent random variables, each with density <span class="math inline">f(x) = 2x</span> on <span class="math inline">[0, 1]</span>.</p>
+<ol type="a">
+<li>Write down the joint density <span class="math inline">f_{X_1, \ldots, X_n}(x_1, \ldots, x_n)</span>.</li>
+<li>Compute <span class="math inline">P(X_1 \leq 0.5 \text{ and } X_2 \leq 0.5 \text{ and } \cdots \text{ and } X_n \leq 0.5)</span>.</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 32%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Discrete</th>
+<th>Continuous</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Distribution</strong></td>
+<td>Values and their probabilities</td>
+<td>Probability density function <span class="math inline">f(x)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Probabilities</strong></td>
+<td><span class="math inline">P(X = k)</span></td>
+<td><span class="math inline">P(a \leq X \leq b) = \int_a^b f(x) \, dx</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Must satisfy</strong></td>
+<td><span class="math inline">\sum_k P(X = k) = 1</span></td>
+<td><span class="math inline">\int_{-\infty}^{\infty} f(x) \, dx = 1</span></td>
+</tr>
+<tr class="even">
+<td><strong>Independence</strong></td>
+<td><span class="math inline">P(X = x, Y = y) = P(X=x) \cdot P(Y=y)</span></td>
+<td><span class="math inline">f_{X,Y}(x,y) = f_X(x) \cdot f_Y(y)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="looking-ahead" class="level2">
+<h2 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h2>
+<p>We now have the vocabulary to model measurement error as a random variable. In the next lecture, we’ll use these tools to answer the question from Day 2: <em>which estimator should we prefer?</em></p>
+<p>The key idea will be <strong>maximum likelihood</strong>: given observed data, which value of the unknown parameter makes that data most probable? We’ll discover that this question leads us to a very specific—and very famous—probability distribution.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/apurvanakade\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
