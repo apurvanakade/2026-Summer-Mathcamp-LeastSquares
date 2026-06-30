@@ -346,8 +346,8 @@ These exercises connect polynomial interpolation to linear algebra concepts.
 
 **Exercise 8:** Reinterpret Exercises 5 and 6 in terms of linear algebra. What vector space are we working in? What linear algebraic concepts do the Lagrange polynomials correspond to? What are you doing in Exercise 6 in terms of linear algebra?
 
-**Exercise 9:** Suppose you fit a degree $n-1$ polynomial to the data points $(x_1, y_1), (x_2, y_2), \dots, (x_n, y_n)$. Write down the system of linear equations for the coefficients. The matrix of this system is called a **Vandermonde matrix**. 
+**Exercise 9:** Suppose you fit a degree $n-1$ polynomial to the data points $(1, y_1), (2, y_2), \dots, (n, y_n)$. Write down the system of linear equations for the coefficients. The matrix of this system is called a **Vandermonde matrix**. 
 
-**Exercise 10:** Find the coefficients of the Lagrange basis polynomials in terms of the inverse of the Vandermonde matrix. Compare this to your solution of Exercise 5. Use this to find a formula for the inverse of a Vandermonde matrix.
+**Exercise 10:** (Challenge) Find the coefficients of the Lagrange basis polynomials in terms of the inverse of the Vandermonde matrix. Compare this to your solution of Exercise 5. Use this to find a formula for the inverse of a Vandermonde matrix.
 
 :::
