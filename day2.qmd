@@ -2,7 +2,7 @@
 title: Day 2 - Norms and Estimators
 subtitle: "Canada/USA Mathcamp 2026"
 author: "Apurva Nakade"
-date: "June 2026"
+date: "July 01, 2026"
 toc: true
 jupyter: python3
 ---
@@ -11,7 +11,7 @@ jupyter: python3
 
 In the previous lecture, we saw that fitting a polynomial exactly through all data points leads to **overfitting**—the estimates become extremely sensitive to small changes in the data. The solution is to allow approximate fits, where our model doesn't pass through every point exactly.
 
-Formally, instead of requiring $y_i = f(x_i)$, we introduce **residuals** $\epsilon_1, \epsilon_2, \ldots, \epsilon_n$ and write
+Instead of requiring $y_i = f(x_i)$, we introduce **residuals** $\epsilon_1, \epsilon_2, \ldots, \epsilon_n$ and write
 
 $$
 y_i = f(x_i) + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n.
@@ -19,10 +19,51 @@ $$
 
 The residual $\epsilon_i$ measures how much the model prediction $f(x_i)$ differs from the observed value $y_i$. A good model should make the residuals "small"—but what exactly does "small" mean for a collection of $n$ numbers?
 
+The plots below show two different models fit to the same data. The vertical segments highlight the residuals: the gap between each observed data point and the model's prediction.
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+x = np.arange(1, 6)
+y = x + np.random.normal(0, 0.5, len(x))
+
+xx = np.linspace(0.5, 5.5, 400)
+y_linear = 0.9 * xx + 0.3
+y_quadratic = 0.1 * (xx - 3) ** 2 + 0.8 * xx + 0.5
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), sharey=True)
+
+for ax, yy_model, title in [
+    (axes[0], y_linear, "Linear model"),
+    (axes[1], y_quadratic, "Quadratic model"),
+]:
+    ax.plot(xx, yy_model, color="#1f77b4", linewidth=2)
+    ax.scatter(x, y, color="black", s=35, zorder=3)
+    y_hat = np.interp(x, xx, yy_model)
+    for xi, yi, yhi in zip(x, y, y_hat):
+        ax.vlines(xi, min(yi, yhi), max(yi, yhi), color="#d62728", linewidth=2)
+    ax.set_title(title)
+    ax.set_xlabel("x")
+    ax.grid(alpha=0.25)
+    ax.set_xlim(0.5, 5.5)
+
+axes[0].set_ylabel("y")
+axes[0].plot([], [], color="#d62728", linewidth=2, label="residuals")
+axes[0].legend()
+axes[1].plot([], [], color="#d62728", linewidth=2, label="residuals")
+axes[1].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
 This question leads us to a fundamental principle:
 
 ::: {.callout-tip}
-### The Core Idea: Estimation = Minimization 
+### The Core Idea: Estimation = Minimization
 
 Estimating a quantity from data is equivalent to minimizing the residuals with respect to a chosen notion of "size."
 
@@ -34,36 +75,34 @@ Today we'll explore this principle through the simplest possible estimation prob
 
 ## Estimating a Constant
 
-Suppose you run an experiment to measure the gravitational acceleration $g$ at Earth's surface. Due to measurement error, each trial gives a slightly different value. Here are 100 measurements (in m/s²):
+Suppose you measure the gravitational acceleration $g$ at Earth's surface. Due to measurement error, each trial gives a slightly different value. Here are 10 measurements (in m/s²):
 
 ```{python}
 #| echo: false
 import numpy as np
-import pandas as pd
 
 g_true = 9.81
 np.random.seed(0)
-n = 100
+n = 10
 g_data = g_true + np.random.normal(0, 0.1, n)
 
-# Display first few values
-print("First 10 measurements:", np.round(g_data[:10], 3))
+print("Measurements:", np.round(g_data, 3))
 print(f"Min: {g_data.min():.3f}, Max: {g_data.max():.3f}")
 ```
 
-What single value $\widehat{g}$ best represents the "true" gravitational acceleration?
+What single value best represents the "true" gravitational acceleration?
 
-In estimation language, we want to find $\widehat{g}$ such that
+We want to find a constant $g$ such that
 
 $$
-g_i = \widehat{g} + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
-$$ {#eq-estimating-g}
+g_i = g + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
+$$
 
-where the residuals $\epsilon_i = g_i - \widehat{g}$ are as "small" as possible. 
+where the residuals $\epsilon_i = g_i - g$ are as "small" as possible. We use $\widehat{g}$ to denote the estimate calculated from the data (the minimizer) and $g$ to denote a candidate value we're optimizing over.
 
 ::: {.callout-note}
 ### Connection to Regression
-This is actually a regression problem in disguise! We're fitting a "degree 0 polynomial" (a constant function) to the data. The techniques we develop here will generalize to fitting lines, parabolas, and more complex models.
+This is a regression problem in disguise! We're fitting a "degree 0 polynomial" (a constant function) to the data. The techniques we develop here generalize to fitting lines, parabolas, and more complex models.
 :::
 
 
@@ -75,7 +114,7 @@ $$
 \vec{\epsilon} = \begin{bmatrix}\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n\end{bmatrix} \in \mathbb{R}^n.
 $$
 
-In mathematics, a function that measures vector size is called a **norm**.
+A function that measures vector size is called a **norm**.
 
 ### Definition and Properties
 
@@ -88,16 +127,14 @@ A **norm** on $\mathbb{R}^n$ is a function $\|\cdot\|: \mathbb{R}^n \to \mathbb{
 ::: {.callout-tip collapse="true"}
 ### Why these axioms?
 
-- **Positivity** is natural: size should be non-negative, and only the zero vector has zero size.
-- **Scaling** says that stretching a vector by factor $\alpha$ stretches its size by $|\alpha|$.
-- **Triangle inequality** is the key property that allows us to do analysis (calculus) with norms. It says the "direct path" is never longer than going through an intermediate point.
-
-If we drop the requirement that $\|\vec{x}\| = 0 \Rightarrow \vec{x} = \vec{0}$, we get a **semi-norm**.
+- **Positivity** ensures size is non-negative and only the zero vector has zero size.
+- **Scaling** says stretching a vector by factor $\alpha$ stretches its size by $|\alpha|$.
+- **Triangle inequality** says the direct path is never longer than going through an intermediate point. This property enables calculus with norms.
 :::
 
 ### The $L^p$ Family
 
-The most important family of norms is the **$L^p$ norms**, defined for $p \geq 1$:
+The most important norms are the **$L^p$ norms**, defined for $p \geq 1$:
 
 $$
 \|\vec{x}\|_p = \left( |x_1|^p + |x_2|^p + \cdots + |x_n|^p \right)^{1/p}
@@ -111,21 +148,61 @@ Different values of $p$ weight errors differently:
 ::: {.callout-note}
 ## Exercises: $L^p$ Norms
 
+The main challenge is verifying the triangle inequality; the other axioms are straightforward. For all the following exercises, you may assume that $n = 2$ so that $\vec{x} = (x_1, x_2)$. The proofs extend to general $n$ by induction.
+
 **Exercise 1:** Prove that $\|\cdot\|_1$ satisfies all three norm axioms.
 
 **Exercise 2:** Prove that $\|\cdot\|_2$ satisfies all three norm axioms.
 
-**Exercise 3:** (Challenge) Prove that $\|\cdot\|_p$ is a norm for all $p \geq 1$. (Hint: Look up Minkowski's inequality.)
+**Exercise 3:**
+
+- Prove that if $\|x\|$ is a norm, then $\|x\| ^\circ = k\|x\|$ is also a norm for any $k > 0$.
+- Prove that if $\|x\|'$ and $\|x\|''$ are norms, then $\|x\|''' = \|x\|' + \|x\|''$ is also a norm.^[Because of these closure properties, the set of all norms forms a **convex cone**—it's closed under positive scaling and addition, but not subtraction.]
 :::
+
+The plot below shows the unit circles $\{\vec{x} \in \mathbb{R}^2 : \|\vec{x}\|_p = 1\}$ for different values of $p$.
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+t = np.linspace(0, 2 * np.pi, 600)
+
+x2 = np.cos(t)
+y2 = np.sin(t)
+
+denom1 = np.abs(np.cos(t)) + np.abs(np.sin(t))
+x1 = np.cos(t) / denom1
+y1 = np.sin(t) / denom1
+
+denom_inf = np.maximum(np.abs(np.cos(t)), np.abs(np.sin(t)))
+xinf = np.cos(t) / denom_inf
+yinf = np.sin(t) / denom_inf
+
+plt.figure(figsize=(3, 3))
+plt.plot(x1, y1, label=r"$p=1$", linestyle="--")
+plt.plot(x2, y2, label=r"$p=2$")
+plt.plot(xinf, yinf, label=r"$p=\infty$", linestyle=":")
+plt.axhline(0, color="gray", linewidth=0.5)
+plt.axvline(0, color="gray", linewidth=0.5)
+plt.gca().set_aspect("equal")
+plt.xlim(-1.3, 1.3)
+plt.ylim(-1.3, 1.3)
+plt.legend()
+plt.title("Unit circles for different $p$-norms")
+plt.show()
+```
+
 
 
 ## Three Estimators
 
-We now apply three different $L^p$ norms to our estimation problem and discover that each leads to a familiar statistic.
+We now apply three different norms to our estimation problem and discover that each leads to a familiar statistic.
 
-### $L^2$ Norm: The Mean
+### $L^2$ Norm
 
-The $L^2$ norm is the **Euclidean distance**:
+The $L^2$ norm is the Euclidean distance:
 
 $$
 \|\vec{\epsilon}\|_2 = \sqrt{\epsilon_1^2 + \epsilon_2^2 + \cdots + \epsilon_n^2}
@@ -136,54 +213,61 @@ Because squaring amplifies large values, the $L^2$ norm penalizes large errors h
 ::: {.callout-important}
 #### $L^2$ Estimation Problem
 
-Find $\widehat{g}$ that minimizes 
+Find the value $\widehat{g}_2$ that minimizes
 
 $$
-\|\vec{\epsilon}\|_2 = \sqrt{(\widehat{g} - g_1)^2 + (\widehat{g} - g_2)^2 + \cdots + (\widehat{g} - g_n)^2}
+\sqrt{(g - g_1)^2 + (g - g_2)^2 + \cdots + (g - g_n)^2}
 $$
+
+over all possible values of $g$. This minimizer is called the **ordinary least squares (OLS)** estimate.
 :::
 
 ::: {.callout-note}
 ## Exercises: $L^2$ Estimation
 
-**Exercise 4:** Consider data $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$. Find the value of $\widehat{g}$ that minimizes $\|\vec{\epsilon}\|_2$.
+**Exercise 4:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find the OLS estimate $\widehat{g}_2$.
 
-**Exercise 5:** For general data $g_1, g_2, \ldots, g_n$, find the minimizer $\widehat{g}$. (Hint: It's easier to minimize $\|\vec{\epsilon}\|_2^2$ instead. Why does this give the same answer?)
+**Exercise 5:**
+
+- Show that if $h(x) \geq 0$ for all $x$, then minimizing $h(x)$ is equivalent to minimizing $h(x)^2$.
+- For general data $g_1, g_2, \ldots, g_n$, find the OLS estimate $\widehat{g}_2$.
 :::
 
 
-### $L^1$ Norm: The Median
+### $L^1$ Norm
 
-The $L^1$ norm is the **Manhattan distance** (or taxicab norm):
+The $L^1$ norm is the Manhattan distance:
 
 $$
 \|\vec{\epsilon}\|_1 = |\epsilon_1| + |\epsilon_2| + \cdots + |\epsilon_n|
 $$
 
-Unlike $L^2$, the $L^1$ norm treats all errors proportionally—a error twice as large contributes exactly twice as much to the total.
+Unlike $L^2$, the $L^1$ norm treats all errors proportionally—an error twice as large contributes exactly twice as much.
 
 ::: {.callout-important}
 #### $L^1$ Estimation Problem
 
-Find $\widehat{g}$ that minimizes 
+Find the value $\widehat{g}_1$ that minimizes
 
 $$
-\|\vec{\epsilon}\|_1 = |\widehat{g} - g_1| + |\widehat{g} - g_2| + \cdots + |\widehat{g} - g_n|
+|g - g_1| + |g - g_2| + \cdots + |g - g_n|
 $$
+
+over all possible values of $g$. This minimizer is called the **least absolute deviations (LAD)** estimate.
 :::
 
 ::: {.callout-note}
 ## Exercises: $L^1$ Estimation
 
-**Exercise 6:** Consider data $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$. Find the value of $\widehat{g}$ that minimizes $\|\vec{\epsilon}\|_1$. (Hint: Think geometrically—where should $\widehat{g}$ be relative to the data points?)
+**Exercise 6:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find the LAD estimate $\widehat{g}_1$.
 
-**Exercise 7:** (Challenge) For general sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ odd, find the minimizer $\widehat{g}$.
+**Exercise 7:** For sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ odd, find $\widehat{g}_1$.
 
-**Exercise 8:** (Challenge) For general sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ even, find the minimizer $\widehat{g}$. (Careful: the answer may not be unique!)
+**Exercise 8:** For sorted data with $n$ even, find $\widehat{g}_1$. (The answer may not be unique!)
 :::
 
 
-### $L^\infty$ Norm: The Midrange
+### $L^\infty$ Norm
 
 As $p \to \infty$, the $L^p$ norm converges to the **maximum norm**:
 
@@ -196,56 +280,74 @@ This norm only cares about the single worst error—all other errors are irrelev
 ::: {.callout-important}
 #### $L^\infty$ Estimation Problem
 
-Find $\widehat{g}$ that minimizes 
+Find the value $\widehat{g}_\infty$ that minimizes
 
 $$
-\|\vec{\epsilon}\|_\infty = \max(|\widehat{g} - g_1|, |\widehat{g} - g_2|, \ldots, |\widehat{g} - g_n|)
+\max(|g - g_1|, |g - g_2|, \ldots, |g - g_n|)
 $$
+
+over all possible values of $g$. This minimizer is called the **minimax** estimate.
+:::
+
+::: {.callout-note}
+## Exercises: $L^\infty$ Norm
+
+**Exercise 9:** Prove that $\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)$.
+
+**Exercise 10:** Verify that $\|\cdot\|_\infty$ satisfies all three norm axioms.
 :::
 
 ::: {.callout-note}
 ## Exercises: $L^\infty$ Estimation
 
-**Exercise 9:** (Challenge) Prove that $\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)$.
+**Exercise 11:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find $\widehat{g}_\infty$.
 
-**Exercise 10:** Verify that $\|\cdot\|_\infty$ satisfies all three norm axioms.
+**Exercise 12:** For sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$, find a formula for $\widehat{g}_\infty$.
 
-**Exercise 11:** Consider data $g_1 = 1, g_2 = 2, g_3 = 4, g_4 = 2$. Find the value of $\widehat{g}$ that minimizes $\|\vec{\epsilon}\|_\infty$.
-
-**Exercise 12:** For general sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$, find the minimizer $\widehat{g}$.
 :::
 
-::: {.callout-note}
+**Geometric interpretation:** The $L^\infty$ estimation problem asks: find the smallest interval $[g - r, g + r]$ that contains all the data points. The center of this interval is $\widehat{g}_\infty$, and its half-width $r$ is the minimized $L^\infty$ norm.
 
-## Exercises: Geometry
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
 
-**Exercise 13:** Plot the unit circles $\{\vec{x} \in \mathbb{R}^2 : \|\vec{x}\|_p = 1\}$ for $p = 1$, $p = 2$, and $p = \infty$. What shapes do you see?
+data = np.array([-2, -1, 0, 1, 4])
+g_inf = (data.min() + data.max()) / 2
+r = (data.max() - data.min()) / 2
 
-- $p = 1$: $|x| + |y| = 1$
-- $p = 2$: $x^2 + y^2 = 1$
-- $p = \infty$: $\max(|x|, |y|) = 1$
-
-Use Desmos to explore what happens as $p \to \infty$. What shape emerges? What happens for $p < 1$?
-:::
+fig, ax = plt.subplots(figsize=(8, 2))
+ax.scatter(data, np.zeros_like(data), s=80, color="black", zorder=3)
+ax.axhline(0, color="gray", linewidth=0.5)
+ax.axvline(g_inf, color="#1f77b4", linewidth=2, linestyle="--", label=f"$\\hat{{g}}_\\infty = {g_inf}$")
+ax.axvspan(g_inf - r, g_inf + r, alpha=0.2, color="#1f77b4", label=f"smallest containing interval")
+ax.set_xlim(-4, 6)
+ax.set_ylim(-0.5, 0.5)
+ax.set_yticks([])
+ax.set_xlabel("$g$")
+ax.legend(loc="upper right")
+ax.set_title("$L^\\infty$ estimation: center of the smallest containing interval")
+plt.tight_layout()
+plt.show()
+```
 
 ## Summary: Three Norms, Three Statistics
 
 We've discovered a beautiful unification: three familiar statistics arise from minimizing three different norms.
 
-::: {.callout-tip}
-### Main Result
-
 | Norm | Estimator $\widehat{g}$ | Common Name |
 |------|------------------------|-------------|
 | $L^2$ | $\frac{1}{n}\sum_{i=1}^n g_i$ | **Mean** |
-| $L^1$ | middle value of sorted data | **Median** |
+| $L^1$ | median of data | **Median** |
 | $L^\infty$ | $\frac{\min(g_i) + \max(g_i)}{2}$ | **Midrange** |
-:::
 
-Let's verify this with our gravitational acceleration data:
+Let's verify with our gravitational acceleration data:
 
 ```{python}
 #| echo: false
+import pandas as pd
+
 g_hat_L2 = np.mean(g_data)
 g_hat_L1 = np.median(g_data)
 g_hat_Linf = (np.min(g_data) + np.max(g_data)) / 2
@@ -257,24 +359,24 @@ results = pd.DataFrame({
 print(results.to_string(index=False))
 ```
 
-All three estimates are close to the true value, but they differ. Which should we prefer?
+All three estimates are close to the true value, but they differ—and they behave very differently when things go wrong. The mean uses all data but is sensitive to outliers; the median is robust to outliers but ignores magnitudes; the midrange only uses extreme values, making it extremely sensitive to outliers.
 
-Each has different properties:
+Which should we prefer? It depends on what we know about our measurement errors. If we trust all measurements equally, the mean is natural. If we suspect some measurements may be wildly incorrect, the median provides protection. In practice, the mean ($L^2$) dominates—and the next lecture will explain why: it turns out to be the optimal estimator when measurement errors follow a **normal distribution**.
 
-- **Mean ($L^2$):** Uses all data, but sensitive to outliers (one extreme value can pull it far off)
-- **Median ($L^1$):** Robust to outliers (up to half the data can be corrupted!), but ignores magnitudes
-- **Midrange ($L^\infty$):** Only uses extreme values, extremely sensitive to outliers
+::: {.callout-note}
+## Exercise: Robustness to Outliers
 
-The choice depends on what we know (or assume) about our measurement errors. This leads us to probability theory.
+**Exercise 13:** Consider the data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$ from the earlier exercises. Suppose the last value was recorded incorrectly as $g_5 = 40$ instead of $g_5 = 4$. Recompute all three estimates $\widehat{g}_1$, $\widehat{g}_2$, and $\widehat{g}_\infty$ with this corrupted data. Which estimator changed the most? Which changed the least? Explain why.
+:::
 
 
 ## Looking Ahead
 
-We've seen that different norms lead to different estimators. But we haven't answered the fundamental question: **which norm should we use?**
+We've seen that different norms lead to different estimators. But which norm should we use?
 
-It turns out that the $L^2$ norm (and hence the mean) has a special status. In the next lecture, we'll introduce the **normal distribution** and see that:
+The $L^2$ norm has a special status. In the next lecture, we'll introduce the **normal distribution** and see that:
 
-1. If measurement errors follow a normal distribution, then the $L^2$ estimator is optimal in a precise sense (**maximum likelihood**).
-2. This connection explains why the mean and the method of least squares are so ubiquitous in statistics.
+1. If measurement errors follow a normal distribution, then the $L^2$ estimator is optimal (**maximum likelihood**).
+2. This explains why the mean and least squares are ubiquitous in statistics.
 
-We'll also see how this framework extends from estimating a single constant to fitting lines and more complex models—bringing us back to the regression problem from Day 1.
+We'll also extend this framework from estimating constants to fitting lines and more complex models.
