@@ -1,214 +1,521 @@
 ---
-title: "Day 3: Random Variables and Distributions"
+title: "Day 4: Linear Regression"
 subtitle: "Mathcamp 2026 — Estimation Theory"
 author: "Apurva Nakade"
-date: "June 2026"
-format: pdf
+date: "July 03, 2026"
+toc: true
 jupyter: python3
 ---
 
-## From Measurements to Randomness
+## Introduction
 
-So far, we've treated data points as fixed numbers. But real measurements have *randomness* — repeat an experiment and you'll get different values. Today we build the mathematical framework to describe this randomness.
+In the previous class, we saw the central connections discovered by Gauss between estimators, norms, and normal distributions:
 
-## Discrete Random Variables
+$$
+\boxed{\text{Normal errors}} \Leftrightarrow \boxed{\text{MLE minimizes } \sum \epsilon_i^2} \Leftrightarrow \boxed{\text{MLE} = \text{Mean}}
+$$
 
-### A Loaded Die
+Today, we will extend these ideas from estimating a single quantity to **linear regression**—finding a line that best fits a set of data points. We will see how the same principles of least squares and maximum likelihood estimation apply, and how the geometry of the problem provides insights into the properties of our estimators.
 
-Suppose someone hands you a six-sided die that might be loaded. You roll it 600 times and observe:
+Recall that the problem of regression is to find a function $f$ that predicts a response variable $y$ from a set of predictor variables $x$:
 
-| Outcome | 1 | 2 | 3 | 4 | 5 | 6 |
-|---------|---|---|---|---|---|---|
-| Count | 85 | 92 | 103 | 108 | 112 | 100 |
+$$
+y_i = f(x_i) + \epsilon_i
+$$
+
+Our goal is to *choose* a norm $\|\cdot\|$ and find a function $f$ that minimizes the norm of the residuals $\| \vec{\epsilon} \|$. 
+
+Gauss discovered that if we assume the errors $\epsilon_i$ are normally distributed, then finding the most likely function $f$ is equivalent to minimizing the sum of squared residuals—the square of the $L^2$ norm. We also saw that the more complicated a model, the more sensitive it is to noise in the data, leading to overfitting. 
+
+Statisticians typically start with a simple model and gradually increase complexity. The choice of norm determines the assumed error distribution: the $L^2$ norm assumes normal errors, the $L^1$ norm assumes Laplace errors, and so on.
+
+## Linear Regression
+
+The simplest regression model is linear, where we assume that the response variable $y$ is a linear function of the predictor variable $x$:
+
+$$
+y_i = m x_i + c + \epsilon_i
+$$ {#eq-linear-regression}
+
+where $m$ is the slope, $c$ is the intercept, and $\epsilon_i$ is the error term. The residual vector is:
+
+$$
+\vec{\epsilon} = \begin{bmatrix}
+y_1 - (m x_1 + c) \\
+y_2 - (m x_2 + c) \\
+\vdots \\
+y_n - (m x_n + c)
+\end{bmatrix}
+$$
+
+Assuming normally distributed errors, the MLE is the **least squares estimator**—the values of $m$ and $c$ that minimize:
+
+$$
+e = \| \vec{\epsilon} \|_2^2 = \sum_{i=1}^{n} (y_i - (m x_i + c))^2
+$$ {#eq-residuals-norm}
+
+### Deriving the Estimators
+
+The following exercises walk you through the derivation. We use the notation for averages:
+
+$$
+\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i, \quad \bar{y} = \frac{1}{n} \sum_{i=1}^{n} y_i.
+$$
 
 ::: {.callout-note}
-## Exercise 1: Discrete Probability
 
-(a) Based on this data, estimate the probability of rolling each outcome.
+## Exercise 1: Computing $c$
 
-(b) A fair die has $P(X = k) = 1/6$ for each outcome. Does this die appear fair?
+Find the value of $c$ that minimizes @eq-residuals-norm either by taking the derivative or by noticing that @eq-residuals-norm is a quadratic function of $c$. Your final answer should be in terms of $\bar{x}$, $\bar{y}$, and $m$.
 
-(c) What is your estimate for $P(X \leq 3)$? For $P(X \text{ is even})$?
-
-(d) If you rolled this die 1200 times instead, would your probability estimates change? Would your *confidence* in them change?
 :::
-
-::: {.callout-tip}
-## Definition: Discrete Random Variable
-A **discrete random variable** $X$ takes values in a finite or countable set. Its **probability mass function (PMF)** is $p(x) = P(X = x)$, satisfying:
-
-- $p(x) \geq 0$ for all $x$
-- $\sum_x p(x) = 1$
-:::
-
-## Continuous Random Variables
-
-Many quantities — time, distance, temperature — take continuous values. We can't assign probability to each individual value (there are uncountably many!), but we can assign probability to *intervals*.
 
 ::: {.callout-note}
-## Exercise 2: From Histograms to Density
 
-A random number generator claims to produce values uniformly in $[0, 1]$. You generate 10,000 samples and create a histogram:
+## Exercise 2: Shifting the data
+
+Define 
+
+$$
+\begin{aligned}
+Y_i &= y_i - \bar{y}, \\
+X_i &= x_i - \bar{x}.
+\end{aligned}
+$$
+
+**(a)** What is the average of $Y_i$ and $X_i$? 
+
+**(b)** Using the value of $c$ you found in Exercise 1, show that @eq-linear-regression can be rewritten as
+
+$$
+Y_i = m X_i + \epsilon_i
+$$ {#eq-linear-regression-shifted}
+
+In other words, we can shift the data so that the regression line passes through the origin. Now we only have one parameter to estimate.
+
+Note that this also means that the regression line always passes through the point $(\bar{x}, \bar{y})$.
+
 :::
+
+::: {.callout-note}
+
+## Exercise 3: Estimating $m$
+
+**(a)** Rewrite @eq-residuals-norm in terms of $X_i$ and $Y_i$ using @eq-linear-regression-shifted. 
+
+**(b)** Find the value of $m$ that minimizes @eq-residuals-norm. 
+
+**(c)** Express your answer in terms of the original data $x_i$, $y_i$ and their averages $\bar{x}$, $\bar{y}$.
+
+:::
+
+Your final answer can be written as:
+
+$$
+m = \frac{\text{Cov}(x,y)}{\text{Var}(x)}
+$$ {#eq-slope-formula}
+
+where the **covariance** measures how $x$ and $y$ vary together:
+$$
+\text{Cov}(x,y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
+$$
+and the **variance** measures how spread out $x$ is:
+$$
+\text{Var}(x) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2.
+$$
+
+::: {.callout-note}
+
+## Exercise 4: Simplifying the formula
+
+**(a)** Show that 
+
+$$
+\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y}) = \sum_{i=1}^{n} x_i y_i - n \bar{x} \bar{y}
+$$
+
+**(b)** Show that
+
+$$
+\sum_{i=1}^{n} (x_i - \bar{x})^2 = \sum_{i=1}^{n} x_i^2 - n \bar{x}^2
+$$
+
+This provides a faster way to compute the slope $m$.
+
+:::
+
+::: {.callout-note}
+
+## Example
+
+Consider the example from Day 1 with data points:
+
+$$
+(0, 1.5), (1, 1), (2, 2)
+$$
+
+Use the formulas from Exercises 1–3 to find $m$ and $c$, and predict $y(-1)$.
 
 ```{python}
 #| echo: false
-#| fig-width: 6
-#| fig-height: 3
+import numpy as np
+import matplotlib.pyplot as plt
 
+x = np.array([0, 1, 2])
+y = np.array([1.5, 1, 2])
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.scatter(x, y, s=80, zorder=5)
+ax.text(x[0] - 0.75, y[0] + 0.35, f"({x[0]}, {y[0]})", fontsize=9)
+ax.text(x[1] + 0.15, y[1] - 0.35, f"({x[1]}, {y[1]})", fontsize=9)
+ax.text(x[2] + 0.15, y[2] - 0.35, f"({x[2]}, {y[2]})", fontsize=9)
+
+ax.text(-0.95, 0.35, "y(-1) = ?", fontsize=9, color='red')
+
+ax.axhline(y=0, color='k', linewidth=0.5)
+ax.axvline(x=0, color='k', linewidth=0.5)
+ax.axvline(x=-1, color='red', linewidth=1, linestyle=':')
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_xlim(-2, 3)
+ax.set_ylim(-1, 3)
+ax.set_aspect('equal')
+ax.grid(True, linestyle='--', linewidth=0.6, alpha=0.6)
+ax.set_xticks(np.arange(-2, 4, 0.5))
+ax.set_yticks(np.arange(-1, 4, 0.5))
+
+plt.title("OLS Regression Fit")
+plt.show()
+```
+
+:::
+
+### Summary
+
+We have derived the least squares estimators for linear regression:
+
+$$
+\boxed{
+\begin{aligned}
+m &= \frac{\text{Cov}(x,y)}{\text{Var}(x)} = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2} \\[1em]
+c &= \bar{y} - m\bar{x}
+\end{aligned}
+}
+$$
+
+Key insights:
+
+- The regression line always passes through the point $(\bar{x}, \bar{y})$.
+- The slope $m$ depends on how $x$ and $y$ co-vary relative to how spread out $x$ is.
+- These closed-form solutions exist because we assumed normal errors (least squares).
+
+## Sensitivity of the Estimators
+
+In the first class we talked about sensitivity of predictions to noise in the data. We can also quantify the sensitivity of the estimated parameters $m$ and $c$. Recall that $\kappa_{y_i \to m} = \frac{\partial m}{\partial y_i}$ measures how sensitive the estimate $m$ is to changes in observation $y_i$, and similarly for $c$.
+
+::: {.callout-note}
+
+## Exercise 5: Sensitivity of $m$ and $c$
+
+**(a)** Compute $\kappa_{y_i \to c}$ using your formula for $c$ from Exercise 1 and show that for any fixed $i$, $\kappa_{y_i \to c} \to 0$ as $n \to \infty$ assuming variance of $x$ is bounded.
+
+**(b)** Compute $\kappa_{y_i \to m}$ using your formula for $m$ from Exercise 3 and show that $\kappa_{y_i \to m} \propto \frac{1}{\text{Var}(x)}$.
+
+:::
+
+These results reveal two important insights:
+
+- **More data stabilizes $c$:** The sensitivity of the intercept decreases as we collect more data points. This makes intuitive sense—with more observations, no single point can dramatically shift where the line crosses the $y$-axis.
+
+- **Spread in $x$ stabilizes $m$:** The sensitivity of the slope is inversely proportional to $\text{Var}(x)$. If $x$ is concentrated in a small interval, the estimate of $m$ becomes very sensitive to noise. This point is particularly important for experimental design. If you want to estimate a slope precisely, spread out your $x$ values! 
+
+## What Can Go Wrong?
+
+Linear regression relies on several assumptions: the relationship is linear, errors are normally distributed with constant variance, and there are no hidden variables. When these assumptions fail, our estimates can be misleading. This section explores three ways things can go wrong.
+
+### Residual Analysis
+
+We cannot observe the true errors, but we can examine the **residuals** $\hat{\epsilon}_i = y_i - \hat{y}_i$. If our model is correct, the residuals should look like random noise—no patterns, no trends, no systematic structure.
+
+```{python}
+#| echo: false
 import numpy as np
 import matplotlib.pyplot as plt
 
 np.random.seed(42)
-samples = np.random.uniform(0, 1, 10000)
 
-fig, ax = plt.subplots(figsize=(6, 3))
-ax.hist(samples, bins=20, density=True, alpha=0.7, edgecolor='black')
-ax.axhline(y=1, color='red', linestyle='--', label='f(x) = 1')
-ax.set_xlabel('x')
-ax.set_ylabel('Density')
-ax.set_title('Histogram of 10,000 Uniform Samples')
-ax.legend()
-ax.set_xlim(0, 1)
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+
+n = 50
+
+# 1. Good residuals
+x1 = np.linspace(0, 10, n)
+y1 = 2 * x1 + 1 + np.random.normal(0, 2, n)
+m1, c1 = np.polyfit(x1, y1, 1)
+residuals1 = y1 - (m1 * x1 + c1)
+
+axes[0, 0].scatter(x1, residuals1, alpha=0.7)
+axes[0, 0].axhline(y=0, color='red', linestyle='--')
+axes[0, 0].set_xlabel('x')
+axes[0, 0].set_ylabel('Residuals')
+axes[0, 0].set_ylim(-8, 8)
+
+# 2. Nonlinearity
+x2 = np.linspace(0, 10, n)
+y2 = 0.3 * x2**2 + np.random.normal(0, 1, n)
+m2, c2 = np.polyfit(x2, y2, 1)
+residuals2 = y2 - (m2 * x2 + c2)
+
+axes[0, 1].scatter(x2, residuals2, alpha=0.7)
+axes[0, 1].axhline(y=0, color='red', linestyle='--')
+axes[0, 1].set_xlabel('x')
+axes[0, 1].set_ylabel('Residuals')
+axes[0, 1].set_ylim(-8, 8)
+
+# 3. Heteroscedasticity
+x3 = np.linspace(0.5, 10, n)
+y3 = 2 * x3 + 1 + np.random.normal(0, 1, n) * x3 * 0.5
+m3, c3 = np.polyfit(x3, y3, 1)
+residuals3 = y3 - (m3 * x3 + c3)
+
+axes[1, 0].scatter(x3, residuals3, alpha=0.7)
+axes[1, 0].axhline(y=0, color='red', linestyle='--')
+axes[1, 0].set_xlabel('x')
+axes[1, 0].set_ylabel('Residuals')
+axes[1, 0].set_ylim(-8, 8)
+
+# 4. Outliers
+x4 = np.linspace(0, 10, n)
+y4 = 2 * x4 + 1 + np.random.normal(0, 1.5, n)
+y4[25] = 35
+y4[40] = -10
+m4, c4 = np.polyfit(x4, y4, 1)
+residuals4 = y4 - (m4 * x4 + c4)
+
+axes[1, 1].scatter(x4, residuals4, alpha=0.7)
+axes[1, 1].axhline(y=0, color='red', linestyle='--')
+axes[1, 1].set_xlabel('x')
+axes[1, 1].set_ylabel('Residuals')
+
 plt.tight_layout()
 plt.show()
 ```
 
-::: {.callout-note}
-(a) The histogram is normalized so that area = 1. Why is this the right normalization?
+- **Top left (Good):** Random scatter around zero with constant spread—our assumptions appear valid.
+- **Top right (Nonlinearity):** Curved pattern suggests the true relationship is not linear.
+- **Bottom left (Heteroscedasticity):** Spread increases with $x$, violating constant variance.
+- **Bottom right (Outliers):** A few extreme points may indicate data errors or heavy-tailed distributions.
 
-(b) The red dashed line shows $f(x) = 1$. What does the height represent? (Hint: it's not probability!)
+### Anscombe's Quartet
 
-(c) Estimate $P(0.3 \leq X \leq 0.5)$ from the histogram. How does this relate to area?
-:::
-
-::: {.callout-tip}
-## Definition: Continuous Random Variable
-A **continuous random variable** $X$ has a **probability density function (PDF)** $f(x)$ satisfying:
-
-- $f(x) \geq 0$ for all $x$
-- $\int_{-\infty}^{\infty} f(x)\, dx = 1$
-
-Probabilities are areas: $P(a \leq X \leq b) = \int_a^b f(x)\, dx$
-:::
-
-### Non-Uniform Distributions
-
-::: {.callout-note}
-## Exercise 3: Working with Densities
-
-Consider these density functions on $[0, 1]$ (and zero elsewhere):
-
-(a) $f(x) = 2x$: Verify this is a valid PDF. Find $P(X > 0.5)$ and $P(0.25 \leq X \leq 0.75)$.
-
-(b) $f(x) = 2(1-x)$: Verify this is a valid PDF. Find $P(X < 0.5)$.
-
-(c) Compare your answers to (a) and (b). What's the relationship between these distributions?
-
-(d) $f(x) = 6x(1-x)$: Verify this is a valid PDF. Find $P(0.25 \leq X \leq 0.75)$.
-:::
+In 1973, statistician Francis Anscombe constructed four datasets with identical summary statistics—same means, variances, correlation, and regression line $y = 3 + 0.5x$—yet completely different structures.
 
 ```{python}
 #| echo: false
-#| fig-width: 8
-#| fig-height: 3
+import numpy as np
+import matplotlib.pyplot as plt
 
-fig, axes = plt.subplots(1, 3, figsize=(8, 3))
-x = np.linspace(0, 1, 100)
+anscombe = {
+    'I': {
+        'x': [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5],
+        'y': [8.04, 6.95, 7.58, 8.81, 8.33, 9.96, 7.24, 4.26, 10.84, 4.82, 5.68]
+    },
+    'II': {
+        'x': [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5],
+        'y': [9.14, 8.14, 8.74, 8.77, 9.26, 8.10, 6.13, 3.10, 9.13, 7.26, 4.74]
+    },
+    'III': {
+        'x': [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5],
+        'y': [7.46, 6.77, 12.74, 7.11, 7.81, 8.84, 6.08, 5.39, 8.15, 6.42, 5.73]
+    },
+    'IV': {
+        'x': [8, 8, 8, 8, 8, 8, 8, 19, 8, 8, 8],
+        'y': [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 12.50, 5.56, 7.91, 6.89]
+    }
+}
 
-densities = [
-    (2*x, '$f(x) = 2x$'),
-    (2*(1-x), '$f(x) = 2(1-x)$'),
-    (6*x*(1-x), '$f(x) = 6x(1-x)$')
-]
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+axes = axes.flatten()
 
-for ax, (y, title) in zip(axes, densities):
-    ax.plot(x, y, 'b-', linewidth=2)
-    ax.fill_between(x, y, alpha=0.3)
-    ax.set_xlabel('x')
-    ax.set_ylabel('f(x)')
-    ax.set_title(title)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 2.5)
+for idx, (name, data) in enumerate(anscombe.items()):
+    x = np.array(data['x'])
+    y = np.array(data['y'])
+    
+    m, c = np.polyfit(x, y, 1)
+    
+    axes[idx].scatter(x, y, s=60, alpha=0.8)
+    
+    x_line = np.linspace(2, 20, 100)
+    y_line = m * x_line + c
+    axes[idx].plot(x_line, y_line, 'r--', linewidth=1.5)
+    
+    axes[idx].set_xlabel('x')
+    axes[idx].set_ylabel('y')
+    axes[idx].set_title(f'Dataset {name}')
+    axes[idx].set_xlim(2, 20)
+    axes[idx].set_ylim(2, 14)
+    axes[idx].grid(True, linestyle='--', alpha=0.5)
+
+plt.suptitle("Anscombe's Quartet: Four datasets with identical regression statistics", fontsize=12, y=1.02)
+plt.tight_layout()
+plt.show()
+```
+
+- **Dataset I:** Linear relationship—regression is appropriate.
+- **Dataset II:** Curved relationship—linear regression misses the structure.
+- **Dataset III:** One outlier pulls the regression line away from the true pattern.
+- **Dataset IV:** A single influential point determines everything—extreme low $\text{Var}(x)$.
+
+::: {.callout-warning}
+## The Lesson
+**Always visualize your data.** Summary statistics can completely hide the true structure.
+:::
+
+### Simpson's Paradox
+
+A trend that appears in several groups can reverse when the groups are combined. This is called **Simpson's Paradox**, and it's a warning about hidden variables.
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+n = 100
+
+# Group 1: low x, high y
+x1 = np.random.normal(2, 2, n)
+y1 = 1.5 * x1 + 12 + np.random.normal(0, 2, n)
+
+# Group 2: medium x, medium y  
+x2 = np.random.normal(4.5, 2, n)
+y2 = 1.5 * x2 + 4 + np.random.normal(0, 2, n)
+
+# Group 3: high x, low y
+x3 = np.random.normal(7, 2, n)
+y3 = 1.5 * x3 - 6 + np.random.normal(0, 2, n)
+
+# Combined data
+x_all = np.concatenate([x1, x2, x3])
+y_all = np.concatenate([y1, y2, y3])
+
+# Plot 1: Colored by group with group regression lines
+ax = axes[0]
+colors = ['#e41a1c', '#377eb8', '#4daf4a']
+labels = ['Group A', 'Group B', 'Group C']
+
+for x_g, y_g, color, label in [(x1, y1, colors[0], labels[0]), 
+                                (x2, y2, colors[1], labels[1]), 
+                                (x3, y3, colors[2], labels[2])]:
+    ax.scatter(x_g, y_g, c=color, alpha=0.6, s=40, label=label)
+    m, c = np.polyfit(x_g, y_g, 1)
+    x_line = np.linspace(min(x_g) - 0.3, max(x_g) + 0.3, 50)
+    ax.plot(x_line, m * x_line + c, color=color, linewidth=2)
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_title('Within Each Group: Positive Slope')
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.5)
+
+# Plot 2: Combined with overall regression line
+ax = axes[1]
+ax.scatter(x_all, y_all, c='gray', alpha=0.6, s=40)
+
+m_all, c_all = np.polyfit(x_all, y_all, 1)
+x_line = np.linspace(-4, 14, 100)
+ax.plot(x_line, m_all * x_line + c_all, 'k-', linewidth=2.5, label=f'Overall slope = {m_all:.2f}')
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_title('Combined Data: Negative Slope!')
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.5)
+
+y_min = min(min(y1), min(y2), min(y3)) - 1
+y_max = max(max(y1), max(y2), max(y3)) + 1
+for ax in axes:
+    ax.set_ylim(y_min, y_max)
+    ax.set_xlim(-4, 14)
 
 plt.tight_layout()
 plt.show()
 ```
 
-::: {.callout-tip}
-## The Beta Family
-These densities are special cases of the **Beta distribution**: $f(x) \propto x^a(1-x)^b$ for $a, b > -1$. The cases above correspond to small integer values of $a$ and $b$. This family will reappear when we study estimation.
-:::
-
-## Independence
-
-When are two random events unrelated? 
+Each group shows a positive relationship between $x$ and $y$. But when we ignore group membership and fit a single line, the slope becomes negative! The between-group pattern overwhelms the within-group pattern.
 
 ::: {.callout-note}
-## Exercise 4: Independent or Not?
 
-For each scenario, let $A$ and $B$ be the indicated events. Decide whether knowing $A$ occurred changes the probability of $B$.
+## Exercise 6: What Can Go Wrong?
 
-(a) Flip two fair coins. $A$ = "first coin is heads", $B$ = "second coin is heads"
+**(a)** For each of the four Anscombe datasets, describe what the residual plot would look like and what assumption is violated.
 
-(b) Roll two fair dice. $A$ = "first die shows 6", $B$ = "sum is greater than 7"
+**(b)** In the Simpson's Paradox example, suppose $x$ is years of experience, $y$ is salary, and the groups are different industries. Why might each industry show a positive slope while the combined data shows a negative slope?
 
-(c) Draw two cards from a standard deck *without* replacement. $A$ = "first card is an Ace", $B$ = "second card is an Ace"
+**(c)** If you wanted to estimate the effect of experience on salary, should you fit one regression line or three? Why?
 
-(d) Draw two cards *with* replacement. $A$ = "first card is an Ace", $B$ = "second card is an Ace"
 :::
 
-::: {.callout-tip}
-## Definition: Independence
-Events $A$ and $B$ are **independent** if $P(A \cap B) = P(A) \cdot P(B)$.
+## Beyond Least Squares
 
-Random variables $X$ and $Y$ are **independent** if for all values $x, y$:
-$$P(X = x \text{ and } Y = y) = P(X = x) \cdot P(Y = y)$$
+### $L^1$ Regression
 
-For continuous variables, this becomes: $f_{X,Y}(x,y) = f_X(x) \cdot f_Y(y)$
-:::
+We can formulate linear regression assuming Laplace errors instead of Gaussian errors. The MLE becomes the **Least Absolute Deviations** (LAD) estimator, minimizing:
+
+$$
+e = \sum_{i=1}^{n} |y_i - (m x_i + c)|
+$$ {#eq-lad-residuals-norm}
+
+Unlike least squares, there is no closed-form solution for LAD. It requires numerical optimization (linear programming). While LAD is more robust to outliers, it is computationally more expensive—one reason ordinary least squares remains widely used.
 
 ::: {.callout-note}
-## Exercise 5: Testing Independence
 
-(a) You flip a fair coin twice. Let $X$ = number of heads on first flip, $Y$ = number of heads on second flip. Verify that $X$ and $Y$ are independent by checking the factorization for all four combinations of values.
+## Exercise 7: LAD Regression
 
-(b) You flip a fair coin twice. Let $X$ = number of heads on first flip, $Z$ = total number of heads. Are $X$ and $Z$ independent? Check the factorization.
+For the data points $(0, 1.5), (1, 1), (2, 2)$, find the values of $m$ and $c$ that minimize @eq-lad-residuals-norm.
 
-(c) $(X, Y)$ is uniformly distributed on the unit square $[0,1]^2$. This means $f_{X,Y}(x,y) = 1$ for $0 \leq x, y \leq 1$. Are $X$ and $Y$ independent?
+*Hint:* Consider which points the optimal line must pass through.
+
+```{python}
+#| echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([0, 1, 2])
+y = np.array([1.5, 1, 2])
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.scatter(x, y, s=80, zorder=5)
+ax.text(x[0] - 0.75, y[0] + 0.35, f"({x[0]}, {y[0]})", fontsize=9)
+ax.text(x[1] + 0.15, y[1] - 0.35, f"({x[1]}, {y[1]})", fontsize=9)
+ax.text(x[2] + 0.15, y[2] - 0.35, f"({x[2]}, {y[2]})", fontsize=9)
+
+ax.axhline(y=0, color='k', linewidth=0.5)
+ax.axvline(x=0, color='k', linewidth=0.5)
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_xlim(-2, 3)
+ax.set_ylim(-1, 3)
+ax.set_aspect('equal')
+ax.grid(True, linestyle='--', linewidth=0.6, alpha=0.6)
+ax.set_xticks(np.arange(-2, 4, 0.5))
+ax.set_yticks(np.arange(-1, 4, 0.5))
+
+plt.title("LAD Regression")
+plt.show()
+```
+
 :::
 
-## Multiple Independent Measurements
+### Why Closed-Form Solutions Matter
 
-Here's why independence matters for estimation: when we make *repeated measurements* of the same quantity, we typically assume the measurement errors are independent.
+The fact that we can find closed-form expressions for least squares estimators is a special property of linear regression with normal errors. This is one reason linear regression remains one of the most widely used statistical methods.
 
-::: {.callout-note}
-## Exercise 6: Combining Measurements
-
-You measure a length three times with independent uniform errors. Each measurement $X_i$ is uniformly distributed on $[\theta - 0.5, \theta + 0.5]$ where $\theta$ is the true length.
-
-(a) What is the PDF of each $X_i$?
-
-(b) Write down the joint PDF $f(x_1, x_2, x_3)$ using independence.
-
-(c) If you observe measurements $x_1 = 5.2$, $x_2 = 4.9$, $x_3 = 5.1$, what values of $\theta$ are *consistent* with all three measurements? (That is, for what $\theta$ is $f(x_1, x_2, x_3) > 0$?)
-
-(d) This is a preview of tomorrow's topic. We'll learn how to find the *best* estimate of $\theta$ given the data.
-:::
-
-## Summary
-
-Today we established the probabilistic framework for estimation:
-
-| Concept | Discrete | Continuous |
-|---------|----------|------------|
-| Probability function | PMF: $p(x) = P(X = x)$ | PDF: $f(x)$ |
-| Normalization | $\sum_x p(x) = 1$ | $\int f(x)\, dx = 1$ |
-| Computing probabilities | Sum the PMF | Integrate the PDF |
-| Independence | $P(X=x, Y=y) = P(X=x)P(Y=y)$ | $f_{X,Y}(x,y) = f_X(x)f_Y(y)$ |
-
-**Key insight**: Independence lets us write joint distributions as products, which simplifies the mathematics of combining multiple measurements.
-
-## Looking Ahead
-
-Tomorrow: Given observed data $x_1, \ldots, x_n$ from a distribution that depends on an unknown parameter $\theta$, how do we find the "best" estimate of $\theta$? The answer is **Maximum Likelihood Estimation**, which combines everything we've learned.
+In general, MLEs cannot be computed in closed form. Statisticians use numerical optimization techniques—gradient descent, Newton's method, and others—to maximize the likelihood function.

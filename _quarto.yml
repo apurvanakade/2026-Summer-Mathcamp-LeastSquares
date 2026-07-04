@@ -4,7 +4,6 @@ project:
 
 website:
   title: "How to derive the bell curve"
-  bread-crumbs: true
   page-navigation: true
   navbar:
     left:
@@ -16,8 +15,6 @@ website:
         href: day3.qmd
       - text: Day 4
         href: day4.qmd
-      - text: Day 4'
-        href: day4 copy.qmd
       - text: Day 5
         href: day5.qmd
     right:
@@ -35,7 +32,6 @@ execute:
   # Ensure Quarto preview uses the same Python/Jupyter environment.
   python: /Users/apurvanakade/miniconda3/bin/python
   echo: false
-  cache: true
 
 format:
   html:
@@ -44,6 +40,4 @@ format:
       dark: cyborg
     html-math-method: katex
     page-layout: full
-  pdf:
-    keep-tex: true
 # output-dir: docs

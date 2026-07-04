@@ -52,9 +52,9 @@ for ax, yy_model, title in [
 
 axes[0].set_ylabel("y")
 axes[0].plot([], [], color="#d62728", linewidth=2, label="residuals")
-axes[0].legend()
+axes[0].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 axes[1].plot([], [], color="#d62728", linewidth=2, label="residuals")
-axes[1].legend()
+axes[1].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
 plt.tight_layout()
 plt.show()
@@ -145,21 +145,6 @@ Different values of $p$ weight errors differently:
 - **Small $p$:** treats all errors more equally
 - **Large $p$:** increasingly dominated by the largest errors
 
-::: {.callout-note}
-## Exercises: $L^p$ Norms
-
-The main challenge is verifying the triangle inequality; the other axioms are straightforward. For all the following exercises, you may assume that $n = 2$ so that $\vec{x} = (x_1, x_2)$. The proofs extend to general $n$ by induction.
-
-**Exercise 1:** Prove that $\|\cdot\|_1$ satisfies all three norm axioms.
-
-**Exercise 2:** Prove that $\|\cdot\|_2$ satisfies all three norm axioms.
-
-**Exercise 3:**
-
-- Prove that if $\|x\|$ is a norm, then $\|x\| ^\circ = k\|x\|$ is also a norm for any $k > 0$.
-- Prove that if $\|x\|'$ and $\|x\|''$ are norms, then $\|x\|''' = \|x\|' + \|x\|''$ is also a norm.^[Because of these closure properties, the set of all norms forms a **convex cone**—it's closed under positive scaling and addition, but not subtraction.]
-:::
-
 The plot below shows the unit circles $\{\vec{x} \in \mathbb{R}^2 : \|\vec{x}\|_p = 1\}$ for different values of $p$.
 
 ```{python}
@@ -189,7 +174,7 @@ plt.axvline(0, color="gray", linewidth=0.5)
 plt.gca().set_aspect("equal")
 plt.xlim(-1.3, 1.3)
 plt.ylim(-1.3, 1.3)
-plt.legend()
+plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 plt.title("Unit circles for different $p$-norms")
 plt.show()
 ```
@@ -225,9 +210,9 @@ over all possible values of $g$. This minimizer is called the **ordinary least s
 ::: {.callout-note}
 ## Exercises: $L^2$ Estimation
 
-**Exercise 4:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find the OLS estimate $\widehat{g}_2$.
+**Exercise 1:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find the OLS estimate $\widehat{g}_2$.
 
-**Exercise 5:**
+**Exercise 2:**
 
 - Show that if $h(x) \geq 0$ for all $x$, then minimizing $h(x)$ is equivalent to minimizing $h(x)^2$.
 - For general data $g_1, g_2, \ldots, g_n$, find the OLS estimate $\widehat{g}_2$.
@@ -259,11 +244,11 @@ over all possible values of $g$. This minimizer is called the **least absolute d
 ::: {.callout-note}
 ## Exercises: $L^1$ Estimation
 
-**Exercise 6:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find the LAD estimate $\widehat{g}_1$.
+**Exercise 3:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find the LAD estimate $\widehat{g}_1$.
 
-**Exercise 7:** For sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ odd, find $\widehat{g}_1$.
+**Exercise 4:** For sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$ with $n$ odd, find $\widehat{g}_1$.
 
-**Exercise 8:** For sorted data with $n$ even, find $\widehat{g}_1$. (The answer may not be unique!)
+**Exercise 5:** For sorted data with $n$ even, find $\widehat{g}_1$. (The answer may not be unique!)
 :::
 
 
@@ -290,19 +275,11 @@ over all possible values of $g$. This minimizer is called the **minimax** estima
 :::
 
 ::: {.callout-note}
-## Exercises: $L^\infty$ Norm
-
-**Exercise 9:** Prove that $\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)$.
-
-**Exercise 10:** Verify that $\|\cdot\|_\infty$ satisfies all three norm axioms.
-:::
-
-::: {.callout-note}
 ## Exercises: $L^\infty$ Estimation
 
-**Exercise 11:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find $\widehat{g}_\infty$.
+**Exercise 6:** For data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$, find $\widehat{g}_\infty$.
 
-**Exercise 12:** For sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$, find a formula for $\widehat{g}_\infty$.
+**Exercise 7:** For sorted data $g_1 \leq g_2 \leq \cdots \leq g_n$, find a formula for $\widehat{g}_\infty$.
 
 :::
 
@@ -366,7 +343,7 @@ Which should we prefer? It depends on what we know about our measurement errors.
 ::: {.callout-note}
 ## Exercise: Robustness to Outliers
 
-**Exercise 13:** Consider the data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$ from the earlier exercises. Suppose the last value was recorded incorrectly as $g_5 = 40$ instead of $g_5 = 4$. Recompute all three estimates $\widehat{g}_1$, $\widehat{g}_2$, and $\widehat{g}_\infty$ with this corrupted data. Which estimator changed the most? Which changed the least? Explain why.
+**Exercise 8:** Consider the data $g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4$ from the earlier exercises. Suppose the last value was recorded incorrectly as $g_5 = 40$ instead of $g_5 = 4$. Recompute all three estimates $\widehat{g}_1$, $\widehat{g}_2$, and $\widehat{g}_\infty$ with this corrupted data. Which estimator changed the most? Which changed the least? Explain why.
 :::
 
 
@@ -380,3 +357,27 @@ The $L^2$ norm has a special status. In the next lecture, we'll introduce the **
 2. This explains why the mean and least squares are ubiquitous in statistics.
 
 We'll also extend this framework from estimating constants to fitting lines and more complex models.
+
+## Additional Exercises
+
+::: {.callout-note}
+## Exercises: $L^p$ Norms
+
+The main challenge is verifying the triangle inequality; the other axioms are straightforward. For all the following exercises, you may assume that $n = 2$ so that $\vec{x} = (x_1, x_2)$ and $\vec{y} = (y_1, y_2)$. The proofs extend to general $n$ by induction.
+
+**Exercise 9:** Prove that $\|\cdot\|_1$ satisfies all three norm axioms.
+
+**Exercise 10:** Prove that $\|\cdot\|_2$ satisfies all three norm axioms.
+
+**Exercise 11:** Prove that $\|\cdot\|_\infty$ satisfies all three norm axioms.
+
+**Exercise 12:**
+
+- Prove that if $\|x\|$ is a norm, then $\|x\| ^\circ = k\|x\|$ is also a norm for any $k > 0$.
+- Prove that if $\|x\|'$ and $\|x\|''$ are norms, then $\|x\|''' = \|x\|' + \|x\|''$ is also a norm. 
+
+Because of these closure properties, the set of all norms forms a **convex cone**—it's closed under positive scaling and addition, but not subtraction.
+
+**Exercise 13:** Prove that $\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)$. (Hint: Divide by $\max(|x_1|, \ldots, |x_n|)$.)
+
+:::

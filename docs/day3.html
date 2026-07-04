@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Apurva Nakade">
-<meta name="dcterms.date" content="2026-06-30">
+<meta name="dcterms.date" content="2026-07-02">
 
-<title>Day 1 - Introduction – How to derive the bell curve</title>
+<title>Day 3 - Maximum Likelihood Estimation – How to derive the bell curve</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -120,12 +120,12 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="Day 1 - Introduction – How to derive the bell curve">
+<meta property="og:title" content="Day 3 - Maximum Likelihood Estimation – How to derive the bell curve">
 <meta property="og:description" content="Canada/USA Mathcamp 2026">
-<meta property="og:image" content="https://apurvanakade.github.io/day1_files/figure-html/cell-2-output-1.png">
+<meta property="og:image" content="https://apurvanakade.github.io/day3_files/figure-html/cell-2-output-1.png">
 <meta property="og:site_name" content="How to derive the bell curve">
-<meta property="og:image:height" content="940">
-<meta property="og:image:width" content="1516">
+<meta property="og:image:height" content="748">
+<meta property="og:image:width" content="1132">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -308,7 +308,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./day1.html" aria-current="page"> 
+    <a class="nav-link" href="./day1.html"> 
 <span class="menu-text">Day 1</span></a>
   </li>  
   <li class="nav-item">
@@ -316,7 +316,7 @@ window.Quarto = {
 <span class="menu-text">Day 2</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./day3.html"> 
+    <a class="nav-link active" href="./day3.html" aria-current="page"> 
 <span class="menu-text">Day 3</span></a>
   </li>  
   <li class="nav-item">
@@ -351,20 +351,25 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-estimation-problem" id="toc-the-estimation-problem" class="nav-link active" data-scroll-target="#the-estimation-problem">The Estimation Problem</a>
+  <li><a href="#motivating-example-the-unreliable-scale" id="toc-motivating-example-the-unreliable-scale" class="nav-link active" data-scroll-target="#motivating-example-the-unreliable-scale">Motivating Example: The Unreliable Scale</a>
   <ul class="collapse">
-  <li><a href="#regression" id="toc-regression" class="nav-link" data-scroll-target="#regression">Regression</a></li>
-  <li><a href="#a-motivating-example" id="toc-a-motivating-example" class="nav-link" data-scroll-target="#a-motivating-example">A Motivating Example</a></li>
+  <li><a href="#single-measurement" id="toc-single-measurement" class="nav-link" data-scroll-target="#single-measurement">Single measurement</a></li>
+  <li><a href="#three-measurements" id="toc-three-measurements" class="nav-link" data-scroll-target="#three-measurements">Three Measurements</a></li>
   </ul></li>
-  <li><a href="#exact-polynomial-fits" id="toc-exact-polynomial-fits" class="nav-link" data-scroll-target="#exact-polynomial-fits">Exact Polynomial Fits</a>
+  <li><a href="#likelihood-and-maximum-likelihood-estimation" id="toc-likelihood-and-maximum-likelihood-estimation" class="nav-link" data-scroll-target="#likelihood-and-maximum-likelihood-estimation">Likelihood and Maximum Likelihood Estimation</a>
   <ul class="collapse">
-  <li><a href="#sensitivity-analysis" id="toc-sensitivity-analysis" class="nav-link" data-scroll-target="#sensitivity-analysis">Sensitivity Analysis</a></li>
-  <li><a href="#lagrange-interpolation" id="toc-lagrange-interpolation" class="nav-link" data-scroll-target="#lagrange-interpolation">Lagrange Interpolation</a></li>
-  <li><a href="#overfitting" id="toc-overfitting" class="nav-link" data-scroll-target="#overfitting">Overfitting</a></li>
+  <li><a href="#the-likelihood-function" id="toc-the-likelihood-function" class="nav-link" data-scroll-target="#the-likelihood-function">The Likelihood Function</a></li>
+  <li><a href="#maximum-likelihood-estimation-mle" id="toc-maximum-likelihood-estimation-mle" class="nav-link" data-scroll-target="#maximum-likelihood-estimation-mle">Maximum Likelihood Estimation (MLE)</a></li>
+  <li><a href="#log-likelihood" id="toc-log-likelihood" class="nav-link" data-scroll-target="#log-likelihood">Log-Likelihood</a></li>
   </ul></li>
-  <li><a href="#approximate-fits" id="toc-approximate-fits" class="nav-link" data-scroll-target="#approximate-fits">Approximate Fits</a></li>
-  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
-  <li><a href="#additional-exercises" id="toc-additional-exercises" class="nav-link" data-scroll-target="#additional-exercises">Additional Exercises</a></li>
+  <li><a href="#the-normal-distribution" id="toc-the-normal-distribution" class="nav-link" data-scroll-target="#the-normal-distribution">The Normal Distribution</a>
+  <ul class="collapse">
+  <li><a href="#a-symmetric-error-model" id="toc-a-symmetric-error-model" class="nav-link" data-scroll-target="#a-symmetric-error-model">A Symmetric Error Model</a></li>
+  <li><a href="#mle-with-normal-errors" id="toc-mle-with-normal-errors" class="nav-link" data-scroll-target="#mle-with-normal-errors">MLE with Normal Errors</a></li>
+  <li><a href="#summary-so-far" id="toc-summary-so-far" class="nav-link" data-scroll-target="#summary-so-far">Summary So Far</a></li>
+  </ul></li>
+  <li><a href="#gauss-reverse-derivation" id="toc-gauss-reverse-derivation" class="nav-link" data-scroll-target="#gauss-reverse-derivation">Gauss’ Reverse Derivation</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
     </div>
@@ -374,7 +379,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Day 1 - Introduction</h1>
+<h1 class="title">Day 3 - Maximum Likelihood Estimation</h1>
 <p class="subtitle lead">Canada/USA Mathcamp 2026</p>
 </div>
 
@@ -392,7 +397,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 30, 2026</p>
+      <p class="date">July 2, 2026</p>
     </div>
   </div>
   
@@ -404,213 +409,378 @@ window.Quarto = {
 </header>
 
 
-<section id="the-estimation-problem" class="level2">
-<h2 class="anchored" data-anchor-id="the-estimation-problem">The Estimation Problem</h2>
-<p>Formally we start with the so called estimation problem. We are given a set of data points: <span class="math display">(x_i, y_i) \text{ for } i = 1, 2, \ldots, n.</span> Think of <span class="math inline">x_i</span> as inputs and <span class="math inline">y_i</span> as the corresponding outputs.</p>
-<p>In general, we can have multiple inputs and outputs i.e.&nbsp;<span class="math inline">x_i</span> and <span class="math inline">y_i</span> can be vectors. In the Ceres example, there is one input - the time of observation - and two outputs - the right ascension and declination of the asteroid (coordinates describing its position in the sky). For this class, for simplicity, we will assume that both <span class="math inline">x_i</span> and <span class="math inline">y_i</span> are real numbers.</p>
-<p><strong>Our goal is to estimate the output <span class="math inline">y</span> for a <u>new</u> input <span class="math inline">x</span>.</strong> In the Ceres example, we want to estimate the position of the asteroid at a future time.</p>
-<section id="regression" class="level3">
-<h3 class="anchored" data-anchor-id="regression">Regression</h3>
-<p>One method to solve the estimation problem is using regression. In regression analysis, we assume that there is some function <span class="math inline">f</span> such that</p>
-<p><span class="math display">
-y_i = f(x_i)
-</span></p>
-<p>Notice that there is no restriction on what <span class="math inline">f</span> can be. Data scientists have to make a choice of what <span class="math inline">f</span> should be based on their expertise and the data they have. Probability theoreticians and statisticians have developed a number of methods to make this choice in a principled way. In this class, we will learn about one such method - the method of least squares.</p>
-</section>
-<section id="a-motivating-example" class="level3">
-<h3 class="anchored" data-anchor-id="a-motivating-example">A Motivating Example</h3>
-<p>Consider the following simple example. Suppose we have the following set of points</p>
-<p><span class="math display">
-(-1, 0), (0, 1), (1, 2), (2, 3)
-</span></p>
-<p>Our goal is to estimate the value of <span class="math inline">y</span> at <span class="math inline">x = 3</span>. In this case there is a simple natural choice - we can fit the line <span class="math inline">y = x + 1</span> to the data points and use it to estimate the value of <span class="math inline">y</span> at <span class="math inline">x = 3</span>. This gives us an estimate of <span class="math inline">y = 4</span>.</p>
-<div id="946572fe" class="cell" data-execution_count="1">
+<p>So far we have created estimates from data without making any assumptions. However, we needed to be a choice of the norm on the residuals to define the best estimate. This method was discovered independently by Gauss and Legendre in the early 1800s.</p>
+<p>However, Gauss went further. He realized that there is a further connection between the choice of norm and the distribution of errors. This was a profound insight that connected the method of least squares to probability theory and created the field of statistics and data science as we know it today. Let’s explore this connection through a motivating example.</p>
+<section id="motivating-example-the-unreliable-scale" class="level2">
+<h2 class="anchored" data-anchor-id="motivating-example-the-unreliable-scale">Motivating Example: The Unreliable Scale</h2>
+<p>Suppose you want to weigh yourself on a scale that only shows integer weights.</p>
+<section id="single-measurement" class="level3">
+<h3 class="anchored" data-anchor-id="single-measurement">Single measurement</h3>
+<p>You weigh yourself once and the scale reads 100 lbs. What would be the best estimate of your weight? With no other information you can only assume that your weight is 100 lbs.</p>
+<p>But now suppose through careful testing, you’ve figured out that the scale is biased and the residual errors have the following distribution. Now what is your best estimate after only one observation?</p>
+<div id="c927a235" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="day1_files/figure-html/cell-2-output-1.png" width="758" height="470" class="figure-img"></p>
+<p><img src="day3_files/figure-html/cell-2-output-1.png" width="566" height="374" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>But now suppose the last data point was actually <span class="math inline">(2, 3.5)</span> instead of <span class="math inline">(2, 3)</span>. The linear model <span class="math inline">y = x + 1</span> is no longer a perfect fit for the data. What should we do?</p>
-<p>One option is to fit a cubic polynomial that passes through all four points exactly. The figure below shows both the original line (which no longer fits) and the cubic polynomial fit. The cubic gives us an estimate of <span class="math inline">y = 6</span> for <span class="math inline">x = 3</span>.</p>
-<div id="63d863e0" class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="day1_files/figure-html/cell-3-output-1.png" width="758" height="470" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Notice something troubling: a small change in one data point (from 3 to 3.5) caused a large change in our prediction (from 4 to 6). This is a hint that exact polynomial fits might not be the best approach. We’ll see that <strong>simpler models tend to be less sensitive to small changes in the data</strong>, which makes them more robust when our measurements contain errors.</p>
+<p>The most likely value of the error on your scale is +1. So, since it reads 100 lbs your weight is most likely to be 99 lbs. Thus knowing the probability distribution of errors allows us to improve our estimate. Notice that this introduces a residual <span class="math inline">\epsilon = 1</span> which is higher than the residual you would have if you had estimated your weight to be 100 lbs.</p>
 </section>
-</section>
-<section id="exact-polynomial-fits" class="level2">
-<h2 class="anchored" data-anchor-id="exact-polynomial-fits">Exact Polynomial Fits</h2>
-<p>Let’s analyze the sensitivity problem more carefully. Given <span class="math inline">n</span> data points, we can always find a polynomial of degree <span class="math inline">n-1</span> that passes through all of them exactly.</p>
-<section id="sensitivity-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="sensitivity-analysis">Sensitivity Analysis</h3>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Exercises: Cubic Polynomial Fit
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The following exercises analyze the sensitivity of cubic polynomial fits.</p>
-<p><strong>Exercise 1:</strong> Find the cubic polynomial <span class="math inline">p(x) = a_0 + a_1 x + a_2 x^2 + a_3 x^3</span> fitting the data <span class="math inline">(-1, 0), (0, 1), (1, 2), (2, z)</span>. That is, find the coefficients <span class="math inline">a_0, a_1, a_2, a_3</span> (in terms of <span class="math inline">z</span>) such that <span class="math inline">p(-1) = 0</span>, <span class="math inline">p(0) = 1</span>, <span class="math inline">p(1) = 2</span>, and <span class="math inline">p(2) = z</span>.</p>
-<p><strong>Exercise 2:</strong> Compute <span class="math inline">p(3)</span> (in terms of <span class="math inline">z</span>).</p>
-<p><strong>Exercise 3:</strong> Compute <span class="math inline">\dfrac{dp(3)}{dz}</span>. Call this <span class="math inline">\kappa_{2 \to 3}</span> (kappa).</p>
-</div>
-</div>
-<p>The constant <span class="math inline">\kappa_{2 \to 3}</span> represents the <strong>sensitivity</strong> of the estimate at <span class="math inline">x=3</span> to the value of the data point at <span class="math inline">x=2</span>. One can similarly calculate the sensitivity <span class="math inline">\kappa_{x_i \to 3}</span> for each data point. These constants tell us how much the estimate at <span class="math inline">x=3</span> will change if we change the value of one of the data points.</p>
-<p>In practice, our data is often noisy and we do not know the true values. Any error in the data points will be amplified by the sensitivity constants. The larger the sensitivity, the more our estimate is affected by errors in the data. On the other hand, too small a sensitivity means that our estimate might neglect important information. So we want to find a model that balances these two competing goals.</p>
-</section>
-<section id="lagrange-interpolation" class="level3">
-<h3 class="anchored" data-anchor-id="lagrange-interpolation">Lagrange Interpolation</h3>
-<p>We can extend the above analysis to polynomial fits of any degree. Consider data points <span class="math inline">(i, y_i)</span> for <span class="math inline">i = 1, 2, \dots, n</span>, and suppose our goal is to estimate <span class="math inline">y</span> at <span class="math inline">x = n+1</span>.</p>
-<p>We can fit a degree <span class="math inline">n-1</span> polynomial, i.e., find coefficients <span class="math inline">a_0, a_1, \dots, a_{n-1}</span> such that</p>
-<p><span class="math display">
-y_i = a_0 + a_1 \cdot i + a_2 \cdot i^2 + \dots + a_{n-1} \cdot i^{n-1}
-</span></p>
-<p>for all <span class="math inline">i = 1, 2, \dots, n</span>. We call <span class="math inline">a_i</span> the <strong>parameters</strong> of our model. We will sometimes denote the estimates by <span class="math inline">\widehat{a}_i</span> to emphasize that they are computed from data.</p>
-<p>The cleanest way to construct this polynomial is through Lagrange interpolation.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Exercises: Lagrange Interpolation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Exercise 4:</strong> Suppose you fit a degree <span class="math inline">n-1</span> polynomial to the data points <span class="math inline">(1, y_1), (2, y_2), \dots, (n, y_n)</span>. Call this polynomial <span class="math inline">p(x)</span>.</p>
-<p>Imagine slightly tweaking the value of <span class="math inline">y_1</span> (the first data point) versus slightly tweaking <span class="math inline">y_n</span> (the last data point). Which tweak do you think would affect the estimate <span class="math inline">p(n+1)</span> more?</p>
-<p>Now consider the two extreme sensitivities <span class="math inline">\kappa_{1 \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_1}</span> and <span class="math inline">\kappa_{n \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_n}</span>. Based on your intuition, which one do you think is larger?</p>
-<p><strong>Exercise 5:</strong> Let <span class="math inline">j</span> be an integer between <span class="math inline">1</span> and <span class="math inline">n</span>. Find the degree <span class="math inline">n-1</span> polynomial <span class="math inline">p_j(x)</span> satisfying</p>
-<p><span class="math display">
-p_j(i) = \begin{cases}
-1 &amp; \text{if } i = j, \\
-0 &amp; \text{if } i \neq j.
-\end{cases}
-</span></p>
-<p>Such a polynomial is called a <strong>Lagrange basis polynomial</strong>. (Hint: What are the roots of <span class="math inline">p_j(x)</span>?)</p>
-<p>The plots below show the four Lagrange basis polynomials for <span class="math inline">n = 4</span>. Each polynomial equals 1 at exactly one node (green) and 0 at the others (red).</p>
-<div id="cde914c1" class="cell" data-execution_count="3">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="day1_files/figure-html/cell-4-output-1.png" width="950" height="565" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Exercise 6:</strong> Use the Lagrange basis polynomials to find the degree <span class="math inline">n-1</span> polynomial <span class="math inline">p(x)</span> satisfying</p>
-<p><span class="math display">
-p(i) = y_i, \text{ for } i = 1, 2, \dots, n.
-</span></p>
-<p><strong>Exercise 7:</strong> Now calculate the two extreme sensitivities <span class="math inline">\kappa_{1 \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_1}</span> and <span class="math inline">\kappa_{n \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_n}</span>. Does your answer match your intuition from Exercise 4?</p>
-</div>
-</div>
-</section>
-<section id="overfitting" class="level3">
-<h3 class="anchored" data-anchor-id="overfitting">Overfitting</h3>
-<p>You should find that the sensitivity of the estimate at <span class="math inline">x = n+1</span> to nearby data points increases with <span class="math inline">n</span>. This means that as we increase the degree of the polynomial, our estimate becomes more sensitive to errors in the data.</p>
-<p>In fact, our example is especially nice since the input coordinates are evenly spaced. In general, the sensitivity can be much worse when coordinates are uneven or when the target is far from the data. This is called <strong>Runge’s phenomenon</strong>.</p>
-<p>The fact that sensitivity increases with model complexity is an example of a general phenomenon called <strong>overfitting</strong>. Overfitting occurs when we fit a model that is too complex for the data—such a model captures noise rather than signal and will not generalize well to new inputs.</p>
-</section>
-</section>
-<section id="approximate-fits" class="level2">
-<h2 class="anchored" data-anchor-id="approximate-fits">Approximate Fits</h2>
-<p>This brings us to approximate fits. Instead of requiring the polynomial to pass through all data points exactly, we can find a polynomial that is “close” to the data in some sense. There are many ways to define “closeness.”</p>
-<p>The figure below shows three approaches to fitting the perturbed data <span class="math inline">(-1, 0), (0, 1), (1, 2), (2, 3.5)</span>:</p>
-<div id="6670ed5b" class="cell" data-execution_count="4">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="day1_files/figure-html/cell-5-output-1.png" width="950" height="566" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<ol type="1">
-<li><p><strong>Cubic polynomial (green):</strong> Passes through all four points exactly, gives estimate <span class="math inline">f(3) = 6</span>.</p></li>
-<li><p><strong>Quadratic polynomial (orange):</strong> Uses only the three closest points <span class="math inline">(0,1), (1,2), (2,3.5)</span>, gives estimate <span class="math inline">f(3) = 5.5</span>.</p></li>
-<li><p><strong>Linear least squares (purple):</strong> Finds the “best” line through all four points (we’ll define “best” precisely later), gives estimate <span class="math inline">f(3) = 4.5</span>.</p></li>
-</ol>
-<p>The table below summarizes how sensitive each estimate is to changes in the last data point (comparing to when the last point was <span class="math inline">(2,3)</span> and the estimate was <span class="math inline">f(3)=4</span>):</p>
+<section id="three-measurements" class="level3">
+<h3 class="anchored" data-anchor-id="three-measurements">Three Measurements</h3>
+<p>Suppose you made three measurements: <strong>100, 102, 99</strong>. If we have no other information about the weight then we can choose between mean, median, or midrange depending upon what we want to minimize.</p>
+<p>But we can make a more informed measurement based on the known error distribution. The first observation tells us that the true weight should be between 97 and 101. The second observation tells us that the true weight should be between 99 and 103. The third observation tells us that the true weight should be between 96 and 100. So, the only possible values of the true weight are 99 and 100. Which one is more likely?</p>
+<p>In the table below, <span class="math inline">p(\vec{\epsilon}) = p(\epsilon_1) \cdot p(\epsilon_2) \cdot p(\epsilon_3)</span> is the joint probability of all three errors, assuming the errors are independent.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 8%">
-<col style="width: 21%">
-<col style="width: 14%">
-<col style="width: 55%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Model</th>
-<th>Estimate at <span class="math inline">x=3</span></th>
-<th>Exact fit?</th>
-<th>Sensitivity <span class="math inline">\frac{\Delta f(3)}{\Delta y_4}</span></th>
+<th>True value?</th>
+<th><span class="math inline">\epsilon_1</span></th>
+<th><span class="math inline">p(\epsilon_1)</span></th>
+<th><span class="math inline">\epsilon_2</span></th>
+<th><span class="math inline">p(\epsilon_2)</span></th>
+<th><span class="math inline">\epsilon_3</span></th>
+<th><span class="math inline">p(\epsilon_3)</span></th>
+<th><span class="math inline">p(\vec{\epsilon})</span></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Cubic</td>
-<td>6.0</td>
-<td>Yes</td>
-<td><span class="math inline">\frac{6-4}{0.5} = 4</span></td>
+<td>99</td>
+<td>+1</td>
+<td>0.4</td>
+<td>+3</td>
+<td>0.2</td>
+<td>0</td>
+<td>0.1</td>
+<td>0.008</td>
 </tr>
 <tr class="even">
-<td>Quadratic</td>
-<td>5.5</td>
-<td>No</td>
-<td><span class="math inline">\frac{5.5-4}{0.5} = 3</span></td>
-</tr>
-<tr class="odd">
-<td>Linear</td>
-<td>4.5</td>
-<td>No</td>
-<td><span class="math inline">\frac{4.5-4}{0.5} = 1</span></td>
+<td>100</td>
+<td>0</td>
+<td>0.1</td>
+<td>+2</td>
+<td>0.2</td>
+<td>-1</td>
+<td>0.1</td>
+<td>0.002</td>
 </tr>
 </tbody>
 </table>
-<p>As expected, simpler models have lower sensitivity. But how do we find the “best” line through points that aren’t collinear? This requires a precise definition of “best,” which is where probability theory enters the picture.</p>
+<p>The <strong>likelihood</strong> that your weight equals 99 lbs is 0.008 and the likelihood that your weight equals 100 lbs is 0.002. So we’ll say that 99 lbs is the <strong>most likely</strong> estimate.</p>
+<p>This might seem counterintuitive. After all, we often hear that averaging measurements gives the best estimate. But that advice assumes something specific about how errors behave. With our asymmetric scale, the mean (= (100 + 102 + 99)/3 = 100.33) isn’t optimal.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The key insight
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The “best” estimate depends on what we know (or assume) about the error distribution. Different error distributions lead to different optimal estimates.</p>
+</div>
+</div>
+<p>This led Gauss to thinking about the question: <strong>What error distribution would make the mean the optimal estimate?</strong></p>
 </section>
-<section id="looking-ahead" class="level2">
-<h2 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h2>
-<p>There is no unique solution to the estimation problem—your estimate depends on the model you choose. In this class, we will focus on linear models and learn how to choose among them using probability theory and statistics.</p>
-<p>In the next lecture, we will introduce the <strong>method of maximum likelihood estimation</strong>, which gives a principled way to define “best fit.” We’ll see that under natural assumptions about measurement errors, maximum likelihood leads to the <strong>method of least squares</strong>—the same method Gauss used to find Ceres.</p>
 </section>
-<section id="additional-exercises" class="level2">
-<h2 class="anchored" data-anchor-id="additional-exercises">Additional Exercises</h2>
+<section id="likelihood-and-maximum-likelihood-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="likelihood-and-maximum-likelihood-estimation">Likelihood and Maximum Likelihood Estimation</h2>
+<p>Let’s formalize what we did in the scale example.</p>
+<section id="the-likelihood-function" class="level3">
+<h3 class="anchored" data-anchor-id="the-likelihood-function">The Likelihood Function</h3>
+<p>Given:</p>
+<ul>
+<li>A set of independent observations <span class="math inline">g_1, g_2, \ldots, g_n</span></li>
+<li>A hypothesized true value <span class="math inline">g</span></li>
+<li>A known error distribution <span class="math inline">p(\epsilon)</span>.</li>
+</ul>
+<p>The <strong>likelihood</strong> of <span class="math inline">g</span> is the probability of observing our data if <span class="math inline">g</span> were the true value:</p>
+<p><span id="eq-likelihood"><span class="math display">
+L(g) = \prod_{i=1}^{n} p(\epsilon_i) = \prod_{i=1}^{n} p(g_i - g)
+\tag{1}</span></span></p>
+<p>Here <span class="math inline">\epsilon_i = g_i - g</span> is the error that would be needed for observation <span class="math inline">i</span> if the true value were <span class="math inline">g</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Likelihood vs Probability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These are related but subtly different:</p>
+<ul>
+<li><p><strong>Probability</strong>: Fix the true value, ask about possible observations<br>
+“If my weight is 100 lbs, what’s the probability of seeing 102 on the scale?”</p></li>
+<li><p><strong>Likelihood</strong>: Fix the observations, ask about possible true values<br>
+“I saw 102 on the scale. How likely is it that my true weight is 100 lbs?”</p></li>
+</ul>
+<p>Mathematically they use the same formula, but the interpretation differs.</p>
+</div>
+</div>
+</section>
+<section id="maximum-likelihood-estimation-mle" class="level3">
+<h3 class="anchored" data-anchor-id="maximum-likelihood-estimation-mle">Maximum Likelihood Estimation (MLE)</h3>
+<p>The <strong>maximum likelihood estimate (MLE)</strong> is the value of <span class="math inline">g</span> that maximizes the likelihood function:</p>
+<p><span class="math display">
+\hat{g}_{\text{MLE}} = \arg\max_{g} L(g).
+</span></p>
+<p>In words: the MLE is the true value that makes our observed data most probable.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Optional Exercises: Connections to Linear Algebra
+<span class="screen-reader-only">Note</span>Exercise 1: Coin flips
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>These exercises connect polynomial interpolation to linear algebra concepts.</p>
-<p><strong>Exercise 8:</strong> Reinterpret Exercises 5 and 6 in terms of linear algebra. What vector space are we working in? What linear algebraic concepts do the Lagrange polynomials correspond to? What are you doing in Exercise 6 in terms of linear algebra?</p>
-<p><strong>Exercise 9:</strong> Suppose you fit a degree <span class="math inline">n-1</span> polynomial to the data points <span class="math inline">(1, y_1), (2, y_2), \dots, (n, y_n)</span>. Write down the system of linear equations for the coefficients. The matrix of this system is called a <strong>Vandermonde matrix</strong>.</p>
-<p><strong>Exercise 10:</strong> (Challenge) Find the coefficients of the Lagrange basis polynomials in terms of the inverse of the Vandermonde matrix. Compare this to your solution of Exercise 5. Use this to find a formula for the inverse of a Vandermonde matrix. (Hint: What are the columns of the inverse matrix?)</p>
+<p>You have a coin that you suspect is biased. You want to estimate the probability <span class="math inline">q</span> of getting heads. You flip the coin 10 times and observe “HHHHHHHTTT” (7 heads and 3 tails).</p>
+<ul>
+<li>What is your naive estimate of <span class="math inline">q</span>?</li>
+<li>Write down the likelihood function <span class="math inline">L(q)</span> for this data i.e.&nbsp;write down the probability of observing this data as a function of <span class="math inline">q</span>.</li>
+<li>Find the value of <span class="math inline">q</span> that maximizes <span class="math inline">L(q)</span>. This is your MLE for <span class="math inline">\hat{q}_{\text{MLE}}</span>.</li>
+<li>How does <span class="math inline">\hat{q}_{\text{MLE}}</span> compare to your naive estimate?</li>
+</ul>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Historical Note: MLE
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>MLE was discovered by Gauss in 1809 and later formalized by Fisher in 1922. Today, it is one of the most widely used methods for estimating parameters in statistics and machine learning. It has many nice properties, including consistency (it converges to the true value as the number of observations increases) and efficiency (it achieves the lowest possible variance among unbiased estimators under certain conditions).</p>
+<p>Because MLE requires us to know distribution of errors, there is a lot of research on how to estimate the error distribution from data, and how to make MLE robust to deviations from the assumed distribution.</p>
+<p>Statisticians work on two parallel tracks: (1) developing new methods for estimating parameters, and (2) developing new methods for estimating error distributions.</p>
+</div>
+</div>
+</div>
+<p>We saw an example of working with discrete probability distributions, but the same ideas apply to continuous distributions as well. In fact, continuous distributions are often more realistic for modeling errors. The method of computing MLE then is to write an algebraic expression for the likelihood function as a product <a href="#eq-likelihood" class="quarto-xref">Equation&nbsp;1</a>, and then maximize it with respect to the unknown parameter <span class="math inline">g</span> by taking derivatives and setting them to zero. However this will require us to apply repeated product rules which can be cumbersome. To make maximization easier, we use a standard trick.</p>
+</section>
+<section id="log-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="log-likelihood">Log-Likelihood</h3>
+<p><span class="math inline">\log</span> is a monotonically increasing function, so maximizing the likelihood is equivalent to maximizing the <strong>log-likelihood</strong>:</p>
+<p><span id="eq-log-likelihood"><span class="math display">
+\ell(g) = \log L(g) = \sum_{i=1}^{n} \log p(\epsilon_i) = \sum_{i=1}^{n} \log p(g_i - g)
+\tag{2}</span></span></p>
+</section>
+</section>
+<section id="the-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-normal-distribution">The Normal Distribution</h2>
+<p>Gauss combined the idea of MLE along with his method of least squares to derive the normal distribution. In this section, we will go in the other direction: we will assume that the errors are normally distributed and show that the MLE is the mean of the observations. You’ll then work backwards to show that if the MLE is the mean, then the errors must be normally distributed. This great insight of Gauss cemented the normal distribution as the canonical error distribution in statistics.</p>
+<section id="a-symmetric-error-model" class="level3">
+<h3 class="anchored" data-anchor-id="a-symmetric-error-model">A Symmetric Error Model</h3>
+<p>Let’s consider a different, more realistic error model. Suppose measurement errors follow the bell curve centered at the origin, also called the <strong>normal (Gaussian) distribution</strong>:</p>
+<p><span id="eq-normal-distribution"><span class="math display">
+p(\epsilon) = A \exp\left(-c\epsilon^2\right)
+\tag{3}</span></span></p>
+<p>Here <span class="math inline">c &gt; 0</span> is a constant that controls the spread of the distribution (equals 1/(2 * variance)), and <span class="math inline">A &gt; 0</span> is a normalization constant that ensures the total probability integrates to 1.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>This distribution is centered our the origin (most likely error is zero), is symmetric (positive and negative errors are equally likely), small errors are more likely than large errors, and the probability of an error decreases exponentially with the square of the error.</p>
+<div id="9f0c6873" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="day3_files/figure-html/cell-3-output-1.png" width="758" height="374" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="mle-with-normal-errors" class="level3">
+<h3 class="anchored" data-anchor-id="mle-with-normal-errors">MLE with Normal Errors</h3>
+<p>What happens when we apply maximum likelihood estimation assuming normally distributed errors? Suppose we have <span class="math inline">n</span> independent observations <span class="math inline">g_1, g_2, \ldots, g_n</span> and we hypothesize that the true value is <span class="math inline">g</span>. The errors are <span class="math inline">\epsilon_i = g_i - g</span> which we assume are normally distributed. The likelihood of <span class="math inline">g</span> is:</p>
+<p><span class="math display">
+L(g) = \prod_{i=1}^n A \exp\left(-c\epsilon_i^2\right) = A^n \exp\left(-c\sum_{i=1}^n (g_i - g)^2\right)
+</span></p>
+<p>The log-likelihood is: <span class="math display">
+\ell(g) = \log L(g) = n\log A - c\sum_{i=1}^n (g_i - g)^2
+</span></p>
+<p>The first term doesn’t depend on <span class="math inline">g</span>, so maximizing <span class="math inline">\ell(g)</span> is equivalent to maximizing:</p>
+<p><span class="math display">
+- c\sum_{i=1}^n (g_i - g)^2
+</span></p>
+<p>Since <span class="math inline">c &gt; 0</span>, this is equivalent to <strong>minimizing</strong>:</p>
+<p><span class="math display">
+\sum_{i=1}^n (g_i - g)^2
+</span></p>
+<p>This is the <strong>sum of squared errors</strong> — exactly what we minimize in Ordinary Least Squares (OLS)!</p>
+</section>
+<section id="summary-so-far" class="level3">
+<h3 class="anchored" data-anchor-id="summary-so-far">Summary So Far</h3>
+<p>We’ve established a crucial chain of reasoning:</p>
+<p><span class="math display">
+\boxed{\text{Normal errors}} \implies \boxed{\text{MLE minimizes } \sum(g_i - g)^2} \implies \boxed{\text{MLE} = \text{Mean}}
+</span></p>
+<p>This raises a natural question: is the normal distribution <em>necessary</em>, or just <em>sufficient</em>? Gauss showed it’s both.</p>
+<p><span class="math display">
+\boxed{\text{Mean is optimal}} \implies \boxed{???} \implies \boxed{\text{Errors must be } ???}
+</span></p>
+</section>
+</section>
+<section id="gauss-reverse-derivation" class="level2">
+<h2 class="anchored" data-anchor-id="gauss-reverse-derivation">Gauss’ Reverse Derivation</h2>
+<p>Gauss’ brilliant insight was to work backwards. He started with the <em>conclusion</em> (the mean is the best estimator) and asked what <em>assumptions</em> would justify it.</p>
+<p>Here’s the logical structure of his argument:</p>
+<ol type="1">
+<li><strong>Assume</strong> the mean is the MLE for any dataset</li>
+<li><strong>Derive</strong> what constraint this places on the error distribution</li>
+<li><strong>Solve</strong> for the unique distribution satisfying this constraint</li>
+<li><strong>Conclude</strong> that errors must be normally distributed</li>
+</ol>
+<!-- Gauss published this derivation in 1809 in his work on celestial mechanics. He was trying to compute orbits of planets and asteroids from astronomical observations, where measurement errors were unavoidable. His derivation gave a principled justification for the practice of averaging observations. -->
+<p>The following exercises walk you through Gauss’ derivation step by step. We want to maximize <span class="math inline">\ell(g)</span> from <a href="#eq-log-likelihood" class="quarto-xref">Equation&nbsp;2</a> with respect to <span class="math inline">g</span>. To do this, we take the derivative of <span class="math inline">\ell</span> with respect to <span class="math inline">g</span> and set it equal to zero:</p>
+<p><span class="math display">
+\begin{aligned}
+\frac{d\ell}{dg} = \sum_{i=1}^n \frac{d \log p(g_i - g)}{dg}  &amp;= 0 \\
+\sum_{i=1}^n \frac{d \log p(\epsilon_i)}{dg}  &amp;= 0.
+\end{aligned}
+</span></p>
+<p>Using chain rule, we can write this as:</p>
+<p><span class="math display">
+\begin{aligned}
+\sum_{i=1}^n \frac{d \log p(\epsilon_i)}{d\epsilon_i} \frac{d\epsilon_i}{dg}  &amp;= 0 \\
+\implies
+\sum_{i=1}^n \frac{d \log p(\epsilon_i)}{d\epsilon_i} (-1) &amp;= 0 &amp;&amp; \text{ as } \epsilon_i = g_i - g\\
+\sum_{i=1}^n \frac{d \log p(\epsilon_i)}{d\epsilon_i} &amp;= 0
+\end{aligned}
+</span></p>
+<p>Denote <span class="math inline">\phi(\epsilon) = \frac{d \log p(\epsilon)}{d\epsilon}</span>. This is called the <strong>score function</strong>. We can rewrite the maximum likelihood condition as:</p>
+<p><span id="eq-score-function"><span class="math display">
+\sum_{i=1}^n \phi(\epsilon_i) = \sum_{i=1}^n \phi(g_i - g) = 0.
+\tag{4}</span></span></p>
+<p>The key insight of Gauss’ derivation is that this condition must hold for <em>any</em> set of observations <span class="math inline">g_1, \ldots, g_n</span> for any number of observations <span class="math inline">n</span>. This is a very strong constraint on the function <span class="math inline">\phi</span> and hence on the error distribution <span class="math inline">p(\epsilon)</span>. The following exercises will show that this constraint uniquely determines the normal distribution.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 2: Symmetry
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Now suppose <span class="math inline">n=2</span> i.e.&nbsp;we only have two observations <span class="math inline">g_1</span> and <span class="math inline">g_2</span>. Assume that the MLE is the mean <span class="math inline">\bar{g} = \frac{g_1 + g_2}{2}</span>. Using <a href="#eq-score-function" class="quarto-xref">Equation&nbsp;4</a> for <span class="math inline">n=2</span>, show that this implies that the log-derivative <span class="math inline">\phi</span> must be an odd function i.e.</p>
+<p><span class="math display">
+\phi(-x) = -\phi(x)
+</span></p>
+<p>for all <span class="math inline">x</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 4: Additivity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Now suppose <span class="math inline">n=3</span> i.e.&nbsp;we only have three observations <span class="math inline">g_1</span>, <span class="math inline">g_2</span>, <span class="math inline">g_3</span>. Assume that the MLE is the mean <span class="math inline">\bar{g} = \frac{g_1 + g_2 + g_3}{3}</span>.</p>
+<p><strong>(a)</strong> Show that <span class="math inline">g_3 - \bar{g} = -(g_1 - \bar{g}) - (g_2 - \bar{g})</span>.</p>
+<p><strong>(b)</strong> Using <a href="#eq-score-function" class="quarto-xref">Equation&nbsp;4</a> for <span class="math inline">n=3</span>, show that <span class="math display">\phi(x + y) = \phi(x) + \phi(y)</span> for all <span class="math inline">x, y</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 5: Linearity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Show that the only continuous functions <span class="math inline">\phi</span> that satisfy the constraints from Exercises 3 and 4 are linear functions of the form:</p>
+<p><span class="math display">
+\phi(x) = -c x
+</span></p>
+<p>for some constant <span class="math inline">c</span>. Note that we are using <span class="math inline">-c</span> instead of <span class="math inline">c</span> to match the standard form of the normal distribution in <a href="#eq-normal-distribution" class="quarto-xref">Equation&nbsp;3</a>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 6: Deriving the Normal Distribution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the previous exercise, you have shown that <span class="math display">
+\frac{d \log p(\epsilon)}{d\epsilon} = -c\epsilon
+</span></p>
+<p>Now we perform a calculus trick: integrate both sides with respect to <span class="math inline">\epsilon</span>. Simplify to recover the normal distribution from <a href="#eq-normal-distribution" class="quarto-xref">Equation&nbsp;3</a>. You have now derived the normal distribution from the assumption that the MLE is the mean and achieved eternal glory.</p>
+</div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>Gauss’ argument is mathematically beautiful, but it’s not a proof that real-world errors are normal. It shows the <em>logical equivalence</em> between assuming the mean is optimal and assuming normal errors.</p>
+<p><span class="math display">
+\boxed{\text{Normal errors}} \Leftrightarrow \boxed{\text{MLE minimizes } \sum \epsilon_i^2} \Leftrightarrow \boxed{\text{MLE} = \text{Mean}}
+</span></p>
+<p>Statistics is not mathematics and there is no “correct answer” in the real world. In statistics, our goal is to find evidence to support a model, and then use that model to make predictions. The normal distribution is a convenient model for many real-world phenomena, but it is not the only one. In practice, you can make a histogram of the data to see whether it looks roughly normal.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 7: Fat tails
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What should be the distribution of errors if the MLE is the median instead of the mean? This is called the <strong>Laplace distribution</strong>.</p>
+</div>
+</div>
+<p>The figure below compares the normal and Laplace distributions. Both are centered at zero and have the same variance, but they differ in their tail behavior.</p>
+<div id="41ba332e" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="day3_files/figure-html/cell-4-output-1.png" width="950" height="396" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The Laplace distribution has a sharper peak — more errors are concentrated very close to zero. Since both distributions have the same variance, this means the remaining probability mass must be in the tails (even if we don’t see many tail points in a small sample). The median is the MLE for Laplace errors, just as the mean is the MLE for normal errors. The median is less sensitive to outliers, making it more robust when extreme errors occasionally occur.</p>
 
 
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This is the equation of the bell curve centered at the origin. The most general form of the normal distribution is <span class="math display">p(\epsilon) = \dfrac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\dfrac{(\epsilon - \mu)^2}{2\sigma^2}\right)</span> where <span class="math inline">\mu</span> is the mean and <span class="math inline">\sigma^2</span> is the variance. Here we are considering the special case where <span class="math inline">\mu = 0</span> and <span class="math inline">\sigma^2 = 1/(2c)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Apurva Nakade">
-<meta name="dcterms.date" content="2026-06-30">
+<meta name="dcterms.date" content="2026-07-04">
 
-<title>Day 1 - Introduction – How to derive the bell curve</title>
+<title>Day 5: Multiple Linear Regression – How to derive the bell curve</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -120,12 +120,12 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="Day 1 - Introduction – How to derive the bell curve">
-<meta property="og:description" content="Canada/USA Mathcamp 2026">
-<meta property="og:image" content="https://apurvanakade.github.io/day1_files/figure-html/cell-2-output-1.png">
+<meta property="og:title" content="Day 5: Multiple Linear Regression – How to derive the bell curve">
+<meta property="og:description" content="Mathcamp 2026 — Estimation Theory">
+<meta property="og:image" content="https://apurvanakade.github.io/day5_files/figure-html/cell-2-output-1.png">
 <meta property="og:site_name" content="How to derive the bell curve">
-<meta property="og:image:height" content="940">
-<meta property="og:image:width" content="1516">
+<meta property="og:image:height" content="1324">
+<meta property="og:image:width" content="1324">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -308,7 +308,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./day1.html" aria-current="page"> 
+    <a class="nav-link" href="./day1.html"> 
 <span class="menu-text">Day 1</span></a>
   </li>  
   <li class="nav-item">
@@ -324,7 +324,7 @@ window.Quarto = {
 <span class="menu-text">Day 4</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./day5.html"> 
+    <a class="nav-link active" href="./day5.html" aria-current="page"> 
 <span class="menu-text">Day 5</span></a>
   </li>  
 </ul>
@@ -351,20 +351,17 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-estimation-problem" id="toc-the-estimation-problem" class="nav-link active" data-scroll-target="#the-estimation-problem">The Estimation Problem</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#from-equations-to-matrices" id="toc-from-equations-to-matrices" class="nav-link" data-scroll-target="#from-equations-to-matrices">From Equations to Matrices</a></li>
+  <li><a href="#linear-algebra-essentials" id="toc-linear-algebra-essentials" class="nav-link" data-scroll-target="#linear-algebra-essentials">Linear Algebra Essentials</a>
   <ul class="collapse">
-  <li><a href="#regression" id="toc-regression" class="nav-link" data-scroll-target="#regression">Regression</a></li>
-  <li><a href="#a-motivating-example" id="toc-a-motivating-example" class="nav-link" data-scroll-target="#a-motivating-example">A Motivating Example</a></li>
+  <li><a href="#the-image-of-a-matrix" id="toc-the-image-of-a-matrix" class="nav-link" data-scroll-target="#the-image-of-a-matrix">The Image of a Matrix</a></li>
+  <li><a href="#orthogonality-and-transposes" id="toc-orthogonality-and-transposes" class="nav-link" data-scroll-target="#orthogonality-and-transposes">Orthogonality and Transposes</a></li>
   </ul></li>
-  <li><a href="#exact-polynomial-fits" id="toc-exact-polynomial-fits" class="nav-link" data-scroll-target="#exact-polynomial-fits">Exact Polynomial Fits</a>
-  <ul class="collapse">
-  <li><a href="#sensitivity-analysis" id="toc-sensitivity-analysis" class="nav-link" data-scroll-target="#sensitivity-analysis">Sensitivity Analysis</a></li>
-  <li><a href="#lagrange-interpolation" id="toc-lagrange-interpolation" class="nav-link" data-scroll-target="#lagrange-interpolation">Lagrange Interpolation</a></li>
-  <li><a href="#overfitting" id="toc-overfitting" class="nav-link" data-scroll-target="#overfitting">Overfitting</a></li>
-  </ul></li>
-  <li><a href="#approximate-fits" id="toc-approximate-fits" class="nav-link" data-scroll-target="#approximate-fits">Approximate Fits</a></li>
-  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
-  <li><a href="#additional-exercises" id="toc-additional-exercises" class="nav-link" data-scroll-target="#additional-exercises">Additional Exercises</a></li>
+  <li><a href="#the-geometry-of-least-squares" id="toc-the-geometry-of-least-squares" class="nav-link" data-scroll-target="#the-geometry-of-least-squares">The Geometry of Least Squares</a></li>
+  <li><a href="#back-to-the-single-variable-case" id="toc-back-to-the-single-variable-case" class="nav-link" data-scroll-target="#back-to-the-single-variable-case">Back to the Single Variable Case</a></li>
+  <li><a href="#multiple-regression" id="toc-multiple-regression" class="nav-link" data-scroll-target="#multiple-regression">Multiple Regression</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
     </div>
@@ -374,8 +371,8 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Day 1 - Introduction</h1>
-<p class="subtitle lead">Canada/USA Mathcamp 2026</p>
+<h1 class="title">Day 5: Multiple Linear Regression</h1>
+<p class="subtitle lead">Mathcamp 2026 — Estimation Theory</p>
 </div>
 
 
@@ -392,7 +389,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 30, 2026</p>
+      <p class="date">July 4, 2026</p>
     </div>
   </div>
   
@@ -404,208 +401,332 @@ window.Quarto = {
 </header>
 
 
-<section id="the-estimation-problem" class="level2">
-<h2 class="anchored" data-anchor-id="the-estimation-problem">The Estimation Problem</h2>
-<p>Formally we start with the so called estimation problem. We are given a set of data points: <span class="math display">(x_i, y_i) \text{ for } i = 1, 2, \ldots, n.</span> Think of <span class="math inline">x_i</span> as inputs and <span class="math inline">y_i</span> as the corresponding outputs.</p>
-<p>In general, we can have multiple inputs and outputs i.e.&nbsp;<span class="math inline">x_i</span> and <span class="math inline">y_i</span> can be vectors. In the Ceres example, there is one input - the time of observation - and two outputs - the right ascension and declination of the asteroid (coordinates describing its position in the sky). For this class, for simplicity, we will assume that both <span class="math inline">x_i</span> and <span class="math inline">y_i</span> are real numbers.</p>
-<p><strong>Our goal is to estimate the output <span class="math inline">y</span> for a <u>new</u> input <span class="math inline">x</span>.</strong> In the Ceres example, we want to estimate the position of the asteroid at a future time.</p>
-<section id="regression" class="level3">
-<h3 class="anchored" data-anchor-id="regression">Regression</h3>
-<p>One method to solve the estimation problem is using regression. In regression analysis, we assume that there is some function <span class="math inline">f</span> such that</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>So far we have seen:</p>
+<ul>
+<li>Simpler models are preferred over complex models to avoid overfitting.</li>
+<li>If the errors are normally distributed, the maximum likelihood estimator minimizes the sum of squared errors.</li>
+<li>Closed-form formulas exist for the least squares estimators in simple linear regression.</li>
+</ul>
+<p>Today we will extend these ideas to <strong>multiple linear regression</strong>, where we have more than one predictor variable. This establishes a deep connection between linear regression and linear algebra. We will see that:</p>
+<ul>
+<li>The least squares solution is a <strong>projection</strong> onto a subspace.</li>
+<li>The solution can be written in terms of <strong>matrix operations</strong>.</li>
+<li>The formulas from Day 4 are a special case of a general matrix formula.</li>
+</ul>
+<p>This connection is another reason why linear regression is so widely used—we can leverage powerful tools from linear algebra.</p>
+</section>
+<section id="from-equations-to-matrices" class="level2">
+<h2 class="anchored" data-anchor-id="from-equations-to-matrices">From Equations to Matrices</h2>
+<p>Consider the simple linear regression model:</p>
 <p><span class="math display">
-y_i = f(x_i)
+y_i = c + m x_i + \epsilon_i
 </span></p>
-<p>Notice that there is no restriction on what <span class="math inline">f</span> can be. Data scientists have to make a choice of what <span class="math inline">f</span> should be based on their expertise and the data they have. Probability theoreticians and statisticians have developed a number of methods to make this choice in a principled way. In this class, we will learn about one such method - the method of least squares.</p>
-</section>
-<section id="a-motivating-example" class="level3">
-<h3 class="anchored" data-anchor-id="a-motivating-example">A Motivating Example</h3>
-<p>Consider the following simple example. Suppose we have the following set of points</p>
+<p>for <span class="math inline">i = 1, 2, \dots, n</span>. Writing out all <span class="math inline">n</span> equations:</p>
 <p><span class="math display">
-(-1, 0), (0, 1), (1, 2), (2, 3)
+\begin{aligned}
+c + m x_1 + \epsilon_1 &amp;= y_1 \\
+c + m x_2 + \epsilon_2  &amp;= y_2 \\
+&amp;\vdots \\
+c + m x_n + \epsilon_n &amp;= y_n
+\end{aligned}
 </span></p>
-<p>Our goal is to estimate the value of <span class="math inline">y</span> at <span class="math inline">x = 3</span>. In this case there is a simple natural choice - we can fit the line <span class="math inline">y = x + 1</span> to the data points and use it to estimate the value of <span class="math inline">y</span> at <span class="math inline">x = 3</span>. This gives us an estimate of <span class="math inline">y = 4</span>.</p>
-<div id="946572fe" class="cell" data-execution_count="1">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="day1_files/figure-html/cell-2-output-1.png" width="758" height="470" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>But now suppose the last data point was actually <span class="math inline">(2, 3.5)</span> instead of <span class="math inline">(2, 3)</span>. The linear model <span class="math inline">y = x + 1</span> is no longer a perfect fit for the data. What should we do?</p>
-<p>One option is to fit a cubic polynomial that passes through all four points exactly. The figure below shows both the original line (which no longer fits) and the cubic polynomial fit. The cubic gives us an estimate of <span class="math inline">y = 6</span> for <span class="math inline">x = 3</span>.</p>
-<div id="63d863e0" class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="day1_files/figure-html/cell-3-output-1.png" width="758" height="470" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Notice something troubling: a small change in one data point (from 3 to 3.5) caused a large change in our prediction (from 4 to 6). This is a hint that exact polynomial fits might not be the best approach. We’ll see that <strong>simpler models tend to be less sensitive to small changes in the data</strong>, which makes them more robust when our measurements contain errors.</p>
+<p>This system can be written in matrix form as:</p>
+<p><span class="math display">
+\begin{bmatrix}
+1 &amp; x_1 \\
+1 &amp; x_2 \\
+\vdots &amp; \vdots \\
+1 &amp; x_n
+\end{bmatrix}
+\begin{bmatrix}
+c \\ m
+\end{bmatrix}
++
+\begin{bmatrix}
+\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_n
+\end{bmatrix}
+</span></p>
+<p>We write this compactly as:</p>
+<p><span id="eq-matrix-regression"><span class="math display">
+X \vec{w} + \vec{\epsilon} = \vec{y}
+\tag{1}</span></span></p>
+<p>where</p>
+<p><span class="math display">
+X = \begin{bmatrix}
+1 &amp; x_1\\
+1 &amp; x_2 \\
+\vdots &amp; \vdots \\
+1 &amp; x_n
+\end{bmatrix}, \qquad
+\vec{w} = \begin{bmatrix}
+c \\ m
+\end{bmatrix}, \qquad
+\vec{y} = \begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_n
+\end{bmatrix}
+</span></p>
+<p>The matrix <span class="math inline">X</span> is called the <strong>design matrix</strong>. Each row corresponds to one observation, and each column corresponds to one parameter (the intercept and the slope).</p>
 </section>
+<section id="linear-algebra-essentials" class="level2">
+<h2 class="anchored" data-anchor-id="linear-algebra-essentials">Linear Algebra Essentials</h2>
+<p>Before deriving the least squares solution, we need a few facts from linear algebra.</p>
+<section id="the-image-of-a-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="the-image-of-a-matrix">The Image of a Matrix</h3>
+<p>For an <span class="math inline">n \times k</span> matrix <span class="math inline">X</span>, the <strong>image</strong> (or column space) is:</p>
+<p><span class="math display">
+\text{im}(X) = \{ X \vec{w} \mid \vec{w} \in \mathbb{R}^{k}\}
+</span></p>
+<p>This is the set of all linear combinations of the columns of <span class="math inline">X</span>—a subspace of <span class="math inline">\mathbb{R}^n</span>.</p>
+<p>For simple linear regression with design matrix <span class="math inline">X = \begin{bmatrix} 1 &amp; x_1 \\ 1 &amp; x_2 \\ \vdots &amp; \vdots \\ 1 &amp; x_n \end{bmatrix}</span>, we have:</p>
+<p><span class="math display">
+\text{im}(X) = \left\{ \begin{bmatrix} c + mx_1 \\ c + mx_2 \\ \vdots \\ c + mx_n \end{bmatrix} \,\middle|\, c, m \in \mathbb{R} \right\}
+</span></p>
+<p>Think of it this way: each choice of parameters <span class="math inline">(c, m)</span> gives a prediction for every data point. The image <span class="math inline">\text{im}(X)</span> is the set of <em>all possible predictions</em> our model can make—a 2-dimensional plane living inside <span class="math inline">\mathbb{R}^n</span>.</p>
 </section>
-<section id="exact-polynomial-fits" class="level2">
-<h2 class="anchored" data-anchor-id="exact-polynomial-fits">Exact Polynomial Fits</h2>
-<p>Let’s analyze the sensitivity problem more carefully. Given <span class="math inline">n</span> data points, we can always find a polynomial of degree <span class="math inline">n-1</span> that passes through all of them exactly.</p>
-<section id="sensitivity-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="sensitivity-analysis">Sensitivity Analysis</h3>
+<section id="orthogonality-and-transposes" class="level3">
+<h3 class="anchored" data-anchor-id="orthogonality-and-transposes">Orthogonality and Transposes</h3>
+<p>The key to deriving the least squares solution is the relationship between orthogonality and matrix transposes.</p>
+<div id="lem-transpose-dot" class="theorem lemma">
+<p><span class="theorem-title"><strong>Lemma 1 (Transpose and Dot Products)</strong></span> For any matrix <span class="math inline">X</span> and vectors <span class="math inline">\vec{u}</span>, <span class="math inline">\vec{v}</span> of compatible dimensions:</p>
+<p><span class="math display">
+(X\vec{u}) \cdot \vec{v} = \vec{u} \cdot (X^T \vec{v})
+</span></p>
+<p>In other words, <span class="math inline">X^T</span> “moves across” the dot product.</p>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Exercises: Cubic Polynomial Fit
+<span class="screen-reader-only">Note</span>Proof
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The following exercises analyze the sensitivity of cubic polynomial fits.</p>
-<p><strong>Exercise 1:</strong> Find the cubic polynomial <span class="math inline">p(x) = a_0 + a_1 x + a_2 x^2 + a_3 x^3</span> fitting the data <span class="math inline">(-1, 0), (0, 1), (1, 2), (2, z)</span>. That is, find the coefficients <span class="math inline">a_0, a_1, a_2, a_3</span> (in terms of <span class="math inline">z</span>) such that <span class="math inline">p(-1) = 0</span>, <span class="math inline">p(0) = 1</span>, <span class="math inline">p(1) = 2</span>, and <span class="math inline">p(2) = z</span>.</p>
-<p><strong>Exercise 2:</strong> Compute <span class="math inline">p(3)</span> (in terms of <span class="math inline">z</span>).</p>
-<p><strong>Exercise 3:</strong> Compute <span class="math inline">\dfrac{dp(3)}{dz}</span>. Call this <span class="math inline">\kappa_{2 \to 3}</span> (kappa).</p>
-</div>
-</div>
-<p>The constant <span class="math inline">\kappa_{2 \to 3}</span> represents the <strong>sensitivity</strong> of the estimate at <span class="math inline">x=3</span> to the value of the data point at <span class="math inline">x=2</span>. One can similarly calculate the sensitivity <span class="math inline">\kappa_{x_i \to 3}</span> for each data point. These constants tell us how much the estimate at <span class="math inline">x=3</span> will change if we change the value of one of the data points.</p>
-<p>In practice, our data is often noisy and we do not know the true values. Any error in the data points will be amplified by the sensitivity constants. The larger the sensitivity, the more our estimate is affected by errors in the data. On the other hand, too small a sensitivity means that our estimate might neglect important information. So we want to find a model that balances these two competing goals.</p>
-</section>
-<section id="lagrange-interpolation" class="level3">
-<h3 class="anchored" data-anchor-id="lagrange-interpolation">Lagrange Interpolation</h3>
-<p>We can extend the above analysis to polynomial fits of any degree. Consider data points <span class="math inline">(i, y_i)</span> for <span class="math inline">i = 1, 2, \dots, n</span>, and suppose our goal is to estimate <span class="math inline">y</span> at <span class="math inline">x = n+1</span>.</p>
-<p>We can fit a degree <span class="math inline">n-1</span> polynomial, i.e., find coefficients <span class="math inline">a_0, a_1, \dots, a_{n-1}</span> such that</p>
-<p><span class="math display">
-y_i = a_0 + a_1 \cdot i + a_2 \cdot i^2 + \dots + a_{n-1} \cdot i^{n-1}
+<p>The key is that both sides compute the same sum, just grouped differently.</p>
+<p>Consider a concrete example. Let <span class="math inline">X = \begin{bmatrix} a &amp; b \\ c &amp; d \end{bmatrix}</span>, <span class="math inline">\vec{u} = \begin{bmatrix} u_1 \\ u_2 \end{bmatrix}</span>, <span class="math inline">\vec{v} = \begin{bmatrix} v_1 \\ v_2 \end{bmatrix}</span>.</p>
+<p>Left side: <span class="math display">
+X\vec{u} = \begin{bmatrix} au_1 + bu_2 \\ cu_1 + du_2 \end{bmatrix}, \quad (X\vec{u}) \cdot \vec{v} = (au_1 + bu_2)v_1 + (cu_1 + du_2)v_2
 </span></p>
-<p>for all <span class="math inline">i = 1, 2, \dots, n</span>. We call <span class="math inline">a_i</span> the <strong>parameters</strong> of our model. We will sometimes denote the estimates by <span class="math inline">\widehat{a}_i</span> to emphasize that they are computed from data.</p>
-<p>The cleanest way to construct this polynomial is through Lagrange interpolation.</p>
+<p>Right side: <span class="math display">
+X^T\vec{v} = \begin{bmatrix} av_1 + cv_2 \\ bv_1 + dv_2 \end{bmatrix}, \quad \vec{u} \cdot (X^T\vec{v}) = u_1(av_1 + cv_2) + u_2(bv_1 + dv_2)
+</span></p>
+<p>Expanding both gives <span class="math inline">au_1v_1 + bu_2v_1 + cu_1v_2 + du_2v_2</span>. They’re equal!</p>
+<p>The same pattern works for any size matrix: both sides sum up the quantity <span class="math inline">\sum_{i, j} u_j X_{ij} v_i</span>.</p>
+</div>
+</div>
+</div>
+<div id="lem-orthog-image" class="theorem lemma">
+<p><span class="theorem-title"><strong>Lemma 2 (Orthogonality to the Image)</strong></span> A vector <span class="math inline">\vec{\epsilon}</span> is orthogonal to every vector in <span class="math inline">\text{im}(X)</span> if and only if <span class="math inline">X^T \vec{\epsilon} = \vec{0}</span>.</p>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Exercises: Lagrange Interpolation
+<span class="screen-reader-only">Note</span>Proof
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>Exercise 4:</strong> Suppose you fit a degree <span class="math inline">n-1</span> polynomial to the data points <span class="math inline">(1, y_1), (2, y_2), \dots, (n, y_n)</span>. Call this polynomial <span class="math inline">p(x)</span>.</p>
-<p>Imagine slightly tweaking the value of <span class="math inline">y_1</span> (the first data point) versus slightly tweaking <span class="math inline">y_n</span> (the last data point). Which tweak do you think would affect the estimate <span class="math inline">p(n+1)</span> more?</p>
-<p>Now consider the two extreme sensitivities <span class="math inline">\kappa_{1 \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_1}</span> and <span class="math inline">\kappa_{n \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_n}</span>. Based on your intuition, which one do you think is larger?</p>
-<p><strong>Exercise 5:</strong> Let <span class="math inline">j</span> be an integer between <span class="math inline">1</span> and <span class="math inline">n</span>. Find the degree <span class="math inline">n-1</span> polynomial <span class="math inline">p_j(x)</span> satisfying</p>
-<p><span class="math display">
-p_j(i) = \begin{cases}
-1 &amp; \text{if } i = j, \\
-0 &amp; \text{if } i \neq j.
-\end{cases}
+<p>This lemma says that checking orthogonality to an entire subspace reduces to checking orthogonality to just the columns of <span class="math inline">X</span>.</p>
+<p><strong>Why <span class="math inline">X^T\vec{\epsilon} = \vec{0}</span> implies <span class="math inline">\vec{\epsilon} \perp \text{im}(X)</span>:</strong></p>
+<p>Suppose <span class="math inline">X^T\vec{\epsilon} = \vec{0}</span>. Take any vector in <span class="math inline">\text{im}(X)</span>—it has the form <span class="math inline">X\vec{w}</span> for some <span class="math inline">\vec{w}</span>. We need to show <span class="math inline">\vec{\epsilon} \cdot (X\vec{w}) = 0</span>.</p>
+<p>By <a href="#lem-transpose-dot" class="quarto-xref">Lemma&nbsp;1</a>: <span class="math display">
+\vec{\epsilon} \cdot (X\vec{w}) = (X^T\vec{\epsilon}) \cdot \vec{w} = \vec{0} \cdot \vec{w} = 0 \quad \checkmark
 </span></p>
-<p>Such a polynomial is called a <strong>Lagrange basis polynomial</strong>. (Hint: What are the roots of <span class="math inline">p_j(x)</span>?)</p>
-<p>The plots below show the four Lagrange basis polynomials for <span class="math inline">n = 4</span>. Each polynomial equals 1 at exactly one node (green) and 0 at the others (red).</p>
-<div id="cde914c1" class="cell" data-execution_count="3">
+<p><strong>Why <span class="math inline">\vec{\epsilon} \perp \text{im}(X)</span> implies <span class="math inline">X^T\vec{\epsilon} = \vec{0}</span>:</strong></p>
+<p>Suppose <span class="math inline">\vec{\epsilon}</span> is orthogonal to everything in <span class="math inline">\text{im}(X)</span>. In particular, it’s orthogonal to each column of <span class="math inline">X</span> (since the <span class="math inline">j</span>-th column is <span class="math inline">X\vec{e}_j</span> for a standard basis vector <span class="math inline">\vec{e}_j</span>).</p>
+<p>What is <span class="math inline">X^T\vec{\epsilon}</span>? Its <span class="math inline">j</span>-th entry is the dot product of the <span class="math inline">j</span>-th column of <span class="math inline">X</span> with <span class="math inline">\vec{\epsilon}</span>. Since <span class="math inline">\vec{\epsilon}</span> is orthogonal to each column, every entry is zero.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="the-geometry-of-least-squares" class="level2">
+<h2 class="anchored" data-anchor-id="the-geometry-of-least-squares">The Geometry of Least Squares</h2>
+<p>Now we can understand least squares geometrically. Our goal is to minimize <span class="math inline">\|\vec{\epsilon}\|^2 = \|\vec{y} - X\vec{w}\|^2</span>.</p>
+<p>The vector <span class="math inline">\vec{y}</span> lives in <span class="math inline">\mathbb{R}^n</span>. The set of all possible predictions <span class="math inline">X\vec{w}</span> forms the subspace <span class="math inline">\text{im}(X)</span>. We want to find the point in <span class="math inline">\text{im}(X)</span> closest to <span class="math inline">\vec{y}</span>.</p>
+<p>From geometry, we know: <strong>the closest point is the orthogonal projection</strong>.</p>
+<div id="5f7af937" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="day1_files/figure-html/cell-4-output-1.png" width="950" height="565" class="figure-img"></p>
+<p><img src="day5_files/figure-html/cell-2-output-1.png" width="662" height="662" class="figure-img"></p>
+<figcaption>The least squares solution projects <span class="math inline">\vec{y}</span> onto <span class="math inline">\text{im}(X)</span>. The residual <span class="math inline">\vec{\epsilon}</span> is orthogonal to the image.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><strong>Exercise 6:</strong> Use the Lagrange basis polynomials to find the degree <span class="math inline">n-1</span> polynomial <span class="math inline">p(x)</span> satisfying</p>
-<p><span class="math display">
-p(i) = y_i, \text{ for } i = 1, 2, \dots, n.
-</span></p>
-<p><strong>Exercise 7:</strong> Now calculate the two extreme sensitivities <span class="math inline">\kappa_{1 \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_1}</span> and <span class="math inline">\kappa_{n \to {n+1}} = \dfrac{\partial p(n+1)}{\partial y_n}</span>. Does your answer match your intuition from Exercise 4?</p>
+<div id="thm-normal-equations" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 (The Normal Equations)</strong></span> The vector <span class="math inline">\hat{\vec{w}}</span> minimizes <span class="math inline">\|\vec{y} - X\vec{w}\|^2</span> if and only if it satisfies:</p>
+<p><span id="eq-normal-equations"><span class="math display">
+X^T X \hat{\vec{w}} = X^T \vec{y}
+\tag{2}</span></span></p>
+<p>When <span class="math inline">X^T X</span> is invertible, the unique solution is:</p>
+<p><span id="eq-ols-solution"><span class="math display">
+\hat{\vec{w}} = (X^T X)^{-1} X^T \vec{y}
+\tag{3}</span></span></p>
 </div>
-</div>
-</section>
-<section id="overfitting" class="level3">
-<h3 class="anchored" data-anchor-id="overfitting">Overfitting</h3>
-<p>You should find that the sensitivity of the estimate at <span class="math inline">x = n+1</span> to nearby data points increases with <span class="math inline">n</span>. This means that as we increase the degree of the polynomial, our estimate becomes more sensitive to errors in the data.</p>
-<p>In fact, our example is especially nice since the input coordinates are evenly spaced. In general, the sensitivity can be much worse when coordinates are uneven or when the target is far from the data. This is called <strong>Runge’s phenomenon</strong>.</p>
-<p>The fact that sensitivity increases with model complexity is an example of a general phenomenon called <strong>overfitting</strong>. Overfitting occurs when we fit a model that is too complex for the data—such a model captures noise rather than signal and will not generalize well to new inputs.</p>
-</section>
-</section>
-<section id="approximate-fits" class="level2">
-<h2 class="anchored" data-anchor-id="approximate-fits">Approximate Fits</h2>
-<p>This brings us to approximate fits. Instead of requiring the polynomial to pass through all data points exactly, we can find a polynomial that is “close” to the data in some sense. There are many ways to define “closeness.”</p>
-<p>The figure below shows three approaches to fitting the perturbed data <span class="math inline">(-1, 0), (0, 1), (1, 2), (2, 3.5)</span>:</p>
-<div id="6670ed5b" class="cell" data-execution_count="4">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="day1_files/figure-html/cell-5-output-1.png" width="950" height="566" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<ol type="1">
-<li><p><strong>Cubic polynomial (green):</strong> Passes through all four points exactly, gives estimate <span class="math inline">f(3) = 6</span>.</p></li>
-<li><p><strong>Quadratic polynomial (orange):</strong> Uses only the three closest points <span class="math inline">(0,1), (1,2), (2,3.5)</span>, gives estimate <span class="math inline">f(3) = 5.5</span>.</p></li>
-<li><p><strong>Linear least squares (purple):</strong> Finds the “best” line through all four points (we’ll define “best” precisely later), gives estimate <span class="math inline">f(3) = 4.5</span>.</p></li>
-</ol>
-<p>The table below summarizes how sensitive each estimate is to changes in the last data point (comparing to when the last point was <span class="math inline">(2,3)</span> and the estimate was <span class="math inline">f(3)=4</span>):</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 8%">
-<col style="width: 21%">
-<col style="width: 14%">
-<col style="width: 55%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Model</th>
-<th>Estimate at <span class="math inline">x=3</span></th>
-<th>Exact fit?</th>
-<th>Sensitivity <span class="math inline">\frac{\Delta f(3)}{\Delta y_4}</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Cubic</td>
-<td>6.0</td>
-<td>Yes</td>
-<td><span class="math inline">\frac{6-4}{0.5} = 4</span></td>
-</tr>
-<tr class="even">
-<td>Quadratic</td>
-<td>5.5</td>
-<td>No</td>
-<td><span class="math inline">\frac{5.5-4}{0.5} = 3</span></td>
-</tr>
-<tr class="odd">
-<td>Linear</td>
-<td>4.5</td>
-<td>No</td>
-<td><span class="math inline">\frac{4.5-4}{0.5} = 1</span></td>
-</tr>
-</tbody>
-</table>
-<p>As expected, simpler models have lower sensitivity. But how do we find the “best” line through points that aren’t collinear? This requires a precise definition of “best,” which is where probability theory enters the picture.</p>
-</section>
-<section id="looking-ahead" class="level2">
-<h2 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h2>
-<p>There is no unique solution to the estimation problem—your estimate depends on the model you choose. In this class, we will focus on linear models and learn how to choose among them using probability theory and statistics.</p>
-<p>In the next lecture, we will introduce the <strong>method of maximum likelihood estimation</strong>, which gives a principled way to define “best fit.” We’ll see that under natural assumptions about measurement errors, maximum likelihood leads to the <strong>method of least squares</strong>—the same method Gauss used to find Ceres.</p>
-</section>
-<section id="additional-exercises" class="level2">
-<h2 class="anchored" data-anchor-id="additional-exercises">Additional Exercises</h2>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Optional Exercises: Connections to Linear Algebra
+<span class="screen-reader-only">Note</span>Proof
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>These exercises connect polynomial interpolation to linear algebra concepts.</p>
-<p><strong>Exercise 8:</strong> Reinterpret Exercises 5 and 6 in terms of linear algebra. What vector space are we working in? What linear algebraic concepts do the Lagrange polynomials correspond to? What are you doing in Exercise 6 in terms of linear algebra?</p>
-<p><strong>Exercise 9:</strong> Suppose you fit a degree <span class="math inline">n-1</span> polynomial to the data points <span class="math inline">(1, y_1), (2, y_2), \dots, (n, y_n)</span>. Write down the system of linear equations for the coefficients. The matrix of this system is called a <strong>Vandermonde matrix</strong>.</p>
-<p><strong>Exercise 10:</strong> (Challenge) Find the coefficients of the Lagrange basis polynomials in terms of the inverse of the Vandermonde matrix. Compare this to your solution of Exercise 5. Use this to find a formula for the inverse of a Vandermonde matrix. (Hint: What are the columns of the inverse matrix?)</p>
+<p>The proof has two parts: (1) why orthogonal projection minimizes distance, and (2) how to find it.</p>
+<p><strong>Part 1: Why orthogonal projection wins.</strong></p>
+<p>Imagine standing at point <span class="math inline">\vec{y}</span> above a plane (the image). What’s the shortest path to the plane?</p>
+<p>If you walk at an angle, you travel further than necessary. The shortest path is straight down—perpendicular to the plane. This is just the Pythagorean theorem: if <span class="math inline">\vec{r}</span> is perpendicular to the plane and <span class="math inline">\vec{d}</span> lies in the plane, then <span class="math inline">\|\vec{r} + \vec{d}\|^2 = \|\vec{r}\|^2 + \|\vec{d}\|^2 &gt; \|\vec{r}\|^2</span>.</p>
+<p>So the closest point <span class="math inline">X\hat{\vec{w}}</span> is characterized by: the residual <span class="math inline">\vec{\epsilon} = \vec{y} - X\hat{\vec{w}}</span> is perpendicular to <span class="math inline">\text{im}(X)</span>.</p>
+<p><strong>Part 2: Finding the projection.</strong></p>
+<p>By <a href="#lem-orthog-image" class="quarto-xref">Lemma&nbsp;2</a>, <span class="math inline">\vec{\epsilon} \perp \text{im}(X)</span> is equivalent to <span class="math inline">X^T\vec{\epsilon} = \vec{0}</span>.</p>
+<p>Substituting <span class="math inline">\vec{\epsilon} = \vec{y} - X\hat{\vec{w}}</span>: <span class="math display">
+X^T(\vec{y} - X\hat{\vec{w}}) = \vec{0}
+</span></p>
+<p>Expanding: <span class="math display">
+X^T\vec{y} - X^TX\hat{\vec{w}} = \vec{0}
+</span></p>
+<p>Rearranging gives the <strong>normal equations</strong>: <span class="math display">
+X^TX\hat{\vec{w}} = X^T\vec{y}
+</span></p>
+<p>When <span class="math inline">X^TX</span> is invertible, multiply both sides by <span class="math inline">(X^TX)^{-1}</span>: <span class="math display">
+\hat{\vec{w}} = (X^TX)^{-1}X^T\vec{y}
+</span></p>
 </div>
 </div>
+</div>
+</section>
+<section id="back-to-the-single-variable-case" class="level2">
+<h2 class="anchored" data-anchor-id="back-to-the-single-variable-case">Back to the Single Variable Case</h2>
+<p>We can now use the normal equations to solve <a href="#eq-matrix-regression" class="quarto-xref">Equation&nbsp;1</a>.</p>
+<p><strong>Computing <span class="math inline">X^T X</span>:</strong></p>
+<p><span class="math display">
+X^T X
+=
+\begin{bmatrix}
+1 &amp; 1 &amp; \cdots &amp; 1 \\
+x_1 &amp; x_2 &amp; \cdots &amp; x_n
+\end{bmatrix}
+\begin{bmatrix}
+1 &amp; x_1 \\
+1 &amp; x_2 \\
+\vdots &amp; \vdots \\
+1 &amp; x_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+n &amp; \sum x_i \\
+\sum x_i &amp; \sum x_i^2
+\end{bmatrix}
+=
+n\begin{bmatrix}
+1 &amp; \bar{x} \\
+\bar{x} &amp; \overline{x^2}
+\end{bmatrix}
+</span></p>
+<p><strong>Computing <span class="math inline">X^T \vec{y}</span>:</strong></p>
+<p><span class="math display">
+X^T \vec{y}
+=
+\begin{bmatrix}
+1 &amp; 1 &amp; \cdots &amp; 1 \\
+x_1 &amp; x_2 &amp; \cdots &amp; x_n
+\end{bmatrix}
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+\sum y_i \\
+\sum x_i y_i
+\end{bmatrix}
+=
+n\begin{bmatrix}
+\bar{y} \\
+\overline{xy}
+\end{bmatrix}
+</span></p>
+<p><strong>The determinant of <span class="math inline">X^T X</span>:</strong></p>
+<p><span class="math display">
+\det(X^T X) = n^2(\overline{x^2} - \bar{x}^2) = n^2 \operatorname{Var}(x)
+</span></p>
+<p><strong>Computing <span class="math inline">(X^T X)^{-1}</span>:</strong></p>
+<p><span class="math display">
+(X^T X)^{-1} = \frac{1}{n^2 \operatorname{Var}(x)} \begin{bmatrix}
+n\overline{x^2} &amp; -n\bar{x} \\
+-n\bar{x} &amp; n
+\end{bmatrix}
+= \frac{1}{n \operatorname{Var}(x)} \begin{bmatrix}
+\overline{x^2} &amp; -\bar{x} \\
+-\bar{x} &amp; 1
+\end{bmatrix}
+</span></p>
+<p>So the solution to the least squares problem is:</p>
+<p><span class="math display">
+\boxed{
+\begin{bmatrix}
+c \\
+m
+\end{bmatrix}
+= \frac{1}{\operatorname{Var}(x)} \begin{bmatrix}
+\overline{x^2} &amp; -\bar{x} \\
+-\bar{x} &amp; 1
+\end{bmatrix} \begin{bmatrix}
+\bar{y} \\ \overline{xy}
+\end{bmatrix}}
+</span></p>
+</section>
+<section id="multiple-regression" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-regression">Multiple Regression</h2>
+<p>The power of the matrix formulation is that it generalizes immediately to multiple predictors. Suppose we have <span class="math inline">k</span> predictor variables <span class="math inline">x^{(1)}, x^{(2)}, \ldots, x^{(k)}</span> and we want to fit:</p>
+<p><span class="math display">
+y_i = w_0 + w_1 x_i^{(1)} + w_2 x_i^{(2)} + \cdots + w_k x_i^{(k)} + \epsilon_i
+</span></p>
+<p>The design matrix becomes:</p>
+<p><span class="math display">
+X = \begin{bmatrix}
+1 &amp; x_1^{(1)} &amp; x_1^{(2)} &amp; \cdots &amp; x_1^{(k)} \\
+1 &amp; x_2^{(1)} &amp; x_2^{(2)} &amp; \cdots &amp; x_2^{(k)} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; x_n^{(1)} &amp; x_n^{(2)} &amp; \cdots &amp; x_n^{(k)}
+\end{bmatrix}
+</span></p>
+<p>and the least squares solution is still:</p>
+<p><span class="math display">
+\hat{\vec{w}} = (X^T X)^{-1} X^T \vec{y}
+</span></p>
+<p>The geometry is the same: we project <span class="math inline">\vec{y}</span> onto the <span class="math inline">(k+1)</span>-dimensional subspace <span class="math inline">\text{im}(X)</span>.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>We have seen that linear regression is fundamentally a problem of <strong>orthogonal projection</strong>:</p>
+<ul>
+<li>The design matrix <span class="math inline">X</span> defines a subspace <span class="math inline">\text{im}(X)</span> of possible predictions.</li>
+<li>The least squares solution projects <span class="math inline">\vec{y}</span> onto this subspace.</li>
+<li>The residual <span class="math inline">\vec{\epsilon}</span> is orthogonal to <span class="math inline">\text{im}(X)</span>, leading to the normal equations <span class="math inline">X^T X \hat{\vec{w}} = X^T \vec{y}</span>.</li>
+<li>The solution <span class="math inline">\hat{\vec{w}} = (X^T X)^{-1} X^T \vec{y}</span> generalizes to any number of predictors.</li>
+</ul>
+<p>Over this week, we’ve seen estimation evolve from intuitive ideas (averaging, fitting lines) to a coherent mathematical framework connecting probability, optimization, and linear algebra. The geometric viewpoint of today’s lecture—that estimation is projection—turns out to be remarkably general: the same idea powers Fourier series, signal processing, and machine learning. Whenever you need to approximate something complicated by something simpler, you’re likely projecting onto a subspace.</p>
 
 
 </section>

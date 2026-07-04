@@ -125,7 +125,7 @@ window.Quarto = {
 <meta property="og:image" content="https://apurvanakade.github.io/day2_files/figure-html/cell-2-output-1.png">
 <meta property="og:site_name" content="How to derive the bell curve">
 <meta property="og:image:height" content="710">
-<meta property="og:image:width" content="1900">
+<meta property="og:image:width" content="1899">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -316,16 +316,12 @@ window.Quarto = {
 <span class="menu-text">Day 2</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./day3.qmd"> 
+    <a class="nav-link" href="./day3.html"> 
 <span class="menu-text">Day 3</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./day4.pdf"> 
+    <a class="nav-link" href="./day4.html"> 
 <span class="menu-text">Day 4</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./day4 copy.html"> 
-<span class="menu-text">Day 4’</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./day5.html"> 
@@ -370,8 +366,9 @@ window.Quarto = {
   </ul></li>
   <li><a href="#summary-three-norms-three-statistics" id="toc-summary-three-norms-three-statistics" class="nav-link" data-scroll-target="#summary-three-norms-three-statistics">Summary: Three Norms, Three Statistics</a></li>
   <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
+  <li><a href="#additional-exercises" id="toc-additional-exercises" class="nav-link" data-scroll-target="#additional-exercises">Additional Exercises</a></li>
   </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="day2.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</nav>
     </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
@@ -418,7 +415,7 @@ y_i = f(x_i) + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n.
 </span></p>
 <p>The residual <span class="math inline">\epsilon_i</span> measures how much the model prediction <span class="math inline">f(x_i)</span> differs from the observed value <span class="math inline">y_i</span>. A good model should make the residuals “small”—but what exactly does “small” mean for a collection of <span class="math inline">n</span> numbers?</p>
 <p>The plots below show two different models fit to the same data. The vertical segments highlight the residuals: the gap between each observed data point and the model’s prediction.</p>
-<div id="096fff39" class="cell" data-execution_count="1">
+<div id="fbde7230" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -447,7 +444,7 @@ y_i = f(x_i) + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n.
 <section id="estimating-a-constant" class="level2">
 <h2 class="anchored" data-anchor-id="estimating-a-constant">Estimating a Constant</h2>
 <p>Suppose you measure the gravitational acceleration <span class="math inline">g</span> at Earth’s surface. Due to measurement error, each trial gives a slightly different value. Here are 10 measurements (in m/s²):</p>
-<div id="02945e26" class="cell" data-execution_count="2">
+<div id="c7ce6686" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Measurements: [ 9.986  9.85   9.908 10.034  9.997  9.712  9.905  9.795  9.8    9.851]
 Min: 9.712, Max: 10.034</code></pre>
@@ -520,32 +517,12 @@ g_i = g + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
 <li><strong>Small <span class="math inline">p</span>:</strong> treats all errors more equally</li>
 <li><strong>Large <span class="math inline">p</span>:</strong> increasingly dominated by the largest errors</li>
 </ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^p</span> Norms
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The main challenge is verifying the triangle inequality; the other axioms are straightforward. For all the following exercises, you may assume that <span class="math inline">n = 2</span> so that <span class="math inline">\vec{x} = (x_1, x_2)</span>. The proofs extend to general <span class="math inline">n</span> by induction.</p>
-<p><strong>Exercise 1:</strong> Prove that <span class="math inline">\|\cdot\|_1</span> satisfies all three norm axioms.</p>
-<p><strong>Exercise 2:</strong> Prove that <span class="math inline">\|\cdot\|_2</span> satisfies all three norm axioms.</p>
-<p><strong>Exercise 3:</strong></p>
-<ul>
-<li>Prove that if <span class="math inline">\|x\|</span> is a norm, then <span class="math inline">\|x\| ^\circ = k\|x\|</span> is also a norm for any <span class="math inline">k &gt; 0</span>.</li>
-<li>Prove that if <span class="math inline">\|x\|'</span> and <span class="math inline">\|x\|''</span> are norms, then <span class="math inline">\|x\|''' = \|x\|' + \|x\|''</span> is also a norm.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
-</ul>
-</div>
-</div>
 <p>The plot below shows the unit circles <span class="math inline">\{\vec{x} \in \mathbb{R}^2 : \|\vec{x}\|_p = 1\}</span> for different values of <span class="math inline">p</span>.</p>
-<div id="01a25370" class="cell" data-execution_count="3">
+<div id="51c1737c" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="day2_files/figure-html/cell-4-output-1.png" width="302" height="284" class="figure-img"></p>
+<p><img src="day2_files/figure-html/cell-4-output-1.png" width="373" height="284" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -589,8 +566,8 @@ g_i = g + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Exercise 4:</strong> For data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span>, find the OLS estimate <span class="math inline">\widehat{g}_2</span>.</p>
-<p><strong>Exercise 5:</strong></p>
+<p><strong>Exercise 1:</strong> For data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span>, find the OLS estimate <span class="math inline">\widehat{g}_2</span>.</p>
+<p><strong>Exercise 2:</strong></p>
 <ul>
 <li>Show that if <span class="math inline">h(x) \geq 0</span> for all <span class="math inline">x</span>, then minimizing <span class="math inline">h(x)</span> is equivalent to minimizing <span class="math inline">h(x)^2</span>.</li>
 <li>For general data <span class="math inline">g_1, g_2, \ldots, g_n</span>, find the OLS estimate <span class="math inline">\widehat{g}_2</span>.</li>
@@ -632,9 +609,9 @@ g_i = g + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Exercise 6:</strong> For data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span>, find the LAD estimate <span class="math inline">\widehat{g}_1</span>.</p>
-<p><strong>Exercise 7:</strong> For sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span> with <span class="math inline">n</span> odd, find <span class="math inline">\widehat{g}_1</span>.</p>
-<p><strong>Exercise 8:</strong> For sorted data with <span class="math inline">n</span> even, find <span class="math inline">\widehat{g}_1</span>. (The answer may not be unique!)</p>
+<p><strong>Exercise 3:</strong> For data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span>, find the LAD estimate <span class="math inline">\widehat{g}_1</span>.</p>
+<p><strong>Exercise 4:</strong> For sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span> with <span class="math inline">n</span> odd, find <span class="math inline">\widehat{g}_1</span>.</p>
+<p><strong>Exercise 5:</strong> For sorted data with <span class="math inline">n</span> even, find <span class="math inline">\widehat{g}_1</span>. (The answer may not be unique!)</p>
 </div>
 </div>
 </section>
@@ -668,30 +645,16 @@ g_i = g + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^\infty</span> Norm
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Exercise 9:</strong> Prove that <span class="math inline">\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)</span>.</p>
-<p><strong>Exercise 10:</strong> Verify that <span class="math inline">\|\cdot\|_\infty</span> satisfies all three norm axioms.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^\infty</span> Estimation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Exercise 11:</strong> For data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span>, find <span class="math inline">\widehat{g}_\infty</span>.</p>
-<p><strong>Exercise 12:</strong> For sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span>, find a formula for <span class="math inline">\widehat{g}_\infty</span>.</p>
+<p><strong>Exercise 6:</strong> For data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span>, find <span class="math inline">\widehat{g}_\infty</span>.</p>
+<p><strong>Exercise 7:</strong> For sorted data <span class="math inline">g_1 \leq g_2 \leq \cdots \leq g_n</span>, find a formula for <span class="math inline">\widehat{g}_\infty</span>.</p>
 </div>
 </div>
 <p><strong>Geometric interpretation:</strong> The <span class="math inline">L^\infty</span> estimation problem asks: find the smallest interval <span class="math inline">[g - r, g + r]</span> that contains all the data points. The center of this interval is <span class="math inline">\widehat{g}_\infty</span>, and its half-width <span class="math inline">r</span> is the minimized <span class="math inline">L^\infty</span> norm.</p>
-<div id="c9c26fe4" class="cell" data-execution_count="4">
+<div id="1e468a08" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -732,7 +695,7 @@ g_i = g + \epsilon_i, \quad \text{for } i = 1, 2, \ldots, n,
 </tbody>
 </table>
 <p>Let’s verify with our gravitational acceleration data:</p>
-<div id="38a88ddf" class="cell" data-execution_count="5">
+<div id="a93a6dec" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-stdout">
 <pre><code>         Norm Estimate
     L² (mean)   9.8838
@@ -753,7 +716,7 @@ L∞ (midrange)   9.8732
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Exercise 13:</strong> Consider the data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span> from the earlier exercises. Suppose the last value was recorded incorrectly as <span class="math inline">g_5 = 40</span> instead of <span class="math inline">g_5 = 4</span>. Recompute all three estimates <span class="math inline">\widehat{g}_1</span>, <span class="math inline">\widehat{g}_2</span>, and <span class="math inline">\widehat{g}_\infty</span> with this corrupted data. Which estimator changed the most? Which changed the least? Explain why.</p>
+<p><strong>Exercise 8:</strong> Consider the data <span class="math inline">g_1 = -2, g_2 = -1, g_3 = 0, g_4 = 1, g_5 = 4</span> from the earlier exercises. Suppose the last value was recorded incorrectly as <span class="math inline">g_5 = 40</span> instead of <span class="math inline">g_5 = 4</span>. Recompute all three estimates <span class="math inline">\widehat{g}_1</span>, <span class="math inline">\widehat{g}_2</span>, and <span class="math inline">\widehat{g}_\infty</span> with this corrupted data. Which estimator changed the most? Which changed the least? Explain why.</p>
 </div>
 </div>
 </section>
@@ -766,17 +729,37 @@ L∞ (midrange)   9.8732
 <li>This explains why the mean and least squares are ubiquitous in statistics.</li>
 </ol>
 <p>We’ll also extend this framework from estimating constants to fitting lines and more complex models.</p>
+</section>
+<section id="additional-exercises" class="level2">
+<h2 class="anchored" data-anchor-id="additional-exercises">Additional Exercises</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercises: <span class="math inline">L^p</span> Norms
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The main challenge is verifying the triangle inequality; the other axioms are straightforward. For all the following exercises, you may assume that <span class="math inline">n = 2</span> so that <span class="math inline">\vec{x} = (x_1, x_2)</span> and <span class="math inline">\vec{y} = (y_1, y_2)</span>. The proofs extend to general <span class="math inline">n</span> by induction.</p>
+<p><strong>Exercise 9:</strong> Prove that <span class="math inline">\|\cdot\|_1</span> satisfies all three norm axioms.</p>
+<p><strong>Exercise 10:</strong> Prove that <span class="math inline">\|\cdot\|_2</span> satisfies all three norm axioms.</p>
+<p><strong>Exercise 11:</strong> Prove that <span class="math inline">\|\cdot\|_\infty</span> satisfies all three norm axioms.</p>
+<p><strong>Exercise 12:</strong></p>
+<ul>
+<li>Prove that if <span class="math inline">\|x\|</span> is a norm, then <span class="math inline">\|x\| ^\circ = k\|x\|</span> is also a norm for any <span class="math inline">k &gt; 0</span>.</li>
+<li>Prove that if <span class="math inline">\|x\|'</span> and <span class="math inline">\|x\|''</span> are norms, then <span class="math inline">\|x\|''' = \|x\|' + \|x\|''</span> is also a norm.</li>
+</ul>
+<p>Because of these closure properties, the set of all norms forms a <strong>convex cone</strong>—it’s closed under positive scaling and addition, but not subtraction.</p>
+<p><strong>Exercise 13:</strong> Prove that <span class="math inline">\lim_{p \to \infty} \|\vec{x}\|_p = \max(|x_1|, \ldots, |x_n|)</span>. (Hint: Divide by <span class="math inline">\max(|x_1|, \ldots, |x_n|)</span>.)</p>
+</div>
+</div>
 
 
 </section>
 
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>Because of these closure properties, the set of all norms forms a <strong>convex cone</strong>—it’s closed under positive scaling and addition, but not subtraction.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
